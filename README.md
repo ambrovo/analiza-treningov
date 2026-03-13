@@ -12,9 +12,9 @@ trenutno dostopni programi potrebujejo res ogromno časa za obdelavo podatkov, z
 1. Čim hitrejša prva obdelava podatkov
 2. "sistem" hranjenja že obdelanih podatkov, ki se lahko večkrat uporabijo. 
 
-Točne metrike (ang metrics), ki nas zanimajo in kako se izračunaj, se nahajajo v  [Metrike](METRIKE.md), ki se bodo dopolnjevale tekom projekta. Nekatere nas zanimajo na nivoju ene aktivnosti, druge pa za vso zgodovino.
+Točne metrike (ang metrics), ki nas zanimajo in kako se izračunajo, se nahajajo v  [Metrike](METRIKE.md), ki se bodo dopolnjevale tekom projekta. Nekatere nas zanimajo na nivoju ene aktivnosti, druge pa za vso zgodovino.
 
-Ponastavitve za kasnejše (ne prve) analize so odvisne od metrik samih, naprimer: Zanima nas skupen čas v določenih trenažnih conah (1-6 po moči, 1-5 po utripu), cone se pa skozi čas spreminjajo (če športnik napreduje so starejše cone po moči nižje od novejših). Ko se športniku določijo nove cone, je potrebno aktivnosti od zadnje določitve naprej obdelati po novih conah. 
+Ponastavitve za kasnejše (ne prve) analize so odvisne od metrik samih, naprimer: Zanima nas skupen čas v določenih trenažnih conah (po utripu in moči), cone se pa skozi čas spreminjajo (če športnik napreduje so starejše cone po moči nižje od novejših). Ko se športniku določijo nove cone, je potrebno aktivnosti od zadnje določitve naprej obdelati po novih conah. 
 
 
 ## Namen projekta

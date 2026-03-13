@@ -59,6 +59,49 @@ Pregled vseh metrik, ki jih PeakPower izračunava in shranjuje.
 | **CP Progression** | Časovna serija CP ocen - kako se CP spreminja skozi sezono |
 
 ---
+## GRAFI IN VIZUALIZACIJE
+
+### Trening (Single Workout)
+
+| Graf/Komponenta | Opis |
+|-----------------|------|
+| **Power Duration Curve** | Krivulja moči po trajanju (PDC) |
+| **Time Series Chart** | Časovna serija power/HR/cadence/altitude |
+| **W' Balance Chart** | Sledenje anaerobni kapaciteti skozi trening |
+| **Fatigue Resistance Chart** | Fresh vs. fatigued PDC primerjava |
+| **Zone Distribution** | Tortni/stolpčni graf distribucije časa po conah |
+| **Density Histogram** | Histogram distribucije moči in HR |
+| **Peak Efforts Table** | Tabela najboljših naporov na različnih trajanih |
+| **Lap Table** | Tabela po krogih/intervalih |
+| **Workout Metrics Card** | Osnovne metrike (TSS, NP, avg power, duration) |
+| **Workout Map** | GPS zemljevid z barvnim prikazom moči/HR |
+| **Peak VAM Card** | Najboljše hitrost vzpenjanja (5/10/20 min) |
+| **Intensity Domains Card** | Severe/extreme domain sekunde |
+| **Load Axes Card** | Obremenitev po 6 fizioloških oseh |
+| **Data Quality Summary** | Kakovost podatkov (coverage, spikes) |
+
+### Skozi čas (Historical/Athlete-Level)
+
+| Graf/Komponenta | Opis |
+|-----------------|------|
+| **Fitness Chart** | CTL/ATL/TSB krivulje skozi čas |
+| **Training Load Chart** | Dnevna/tedenska obremenitev |
+| **Aerobic Development Chart** | Aerobne metrike (EF, decoupling) skozi čas |
+| **CP Model Card** | Critical Power modeli (Monod, Morton, PT, OmPD) |
+| **Compound Score Card** | Fresh/fatigued compound score trend |
+| **TSB vs Performance Scatter** | Raztreseni graf TSB vs. performance |
+| **ACWR Chart** | Acute-Chronic Workload Ratio skozi čas |
+| **Fatigue Resistance Trend** | FR index trend preko treningov |
+| **PDC Heatmap** | Heatmap PDC vrednosti skozi čas |
+| **Modeling Lab** | Interaktivni fitanje CP modelov |
+| **Performance Fingerprint** | Radar chart performančnih metrik |
+| **Load Tensor Chart** | 3D prikaz obremenitve |
+| **Aerobic Power Card** | Aerobne metrike kartice |
+| **KPI Cards** | Ključni indikatorji (CTL, TSB, FTP, ramp rate) |
+| **Training Time Chart** | Skupni čas treninga po tednih/mesecih |
+| **W'bal Timeline** | W' balance preko več treningov |
+| **Workout Percentiles Card** | Percentili power/HR |
+| **Workout Calendar** | Koledarski prikaz treningov |
 
 ## OSNOVNI PODATKI (Potrebni za izračune)
 
