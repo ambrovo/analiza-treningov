@@ -9,16 +9,16 @@ Pregled vseh metrik, ki jih PeakPower izračunava in shranjuje.
 | Metrika | Opis |
 |---------|------|
 | **PDC (Power Duration Curve)** | Najboljša povprečna moč na standardnih trajanih (1s do 2h) |
-| **Normalized Power (NP)** | Fiziološko prilagojena moč, ki upošteva variabilnost treninga |
-| **Intensity Factor (IF)** | Relativna intenziteta glede na FTP (NP/FTP) |
-| **Training Stress Score (TSS)** | Obremenitev treninga (1 ura pri FTP = 100 TSS) |
-| **Variability Index (VI)** | Mera variabilnosti moči (NP/avg_power) - ali je trening "steady" |
+| **Normalized Power® (NP®)** | Fiziološko prilagojena moč, ki upošteva variabilnost treninga |
+| **Intensity Factor® (IF®)** | Relativna intenziteta glede na FTP (NP®/FTP) |
+| **Training Stress Score® (TSS®)** | Obremenitev treninga (1 ura pri FTP = 100 TSS®) |
+| **Variability Index (VI)** | Mera variabilnosti moči (NP®/avg_power) - ali je trening "steady" |
 | **Power Zone Distribution** | Čas (sekunde) v vsaki moč coni (Z1-Z7) |
 | **Heart Rate Zone Distribution** | Čas (sekunde) v vsaki srčni coni (Z1-Z5) |
 | **Severe Domain Seconds** | Sekunde z močjo nad FTP |
 | **Extreme Domain Seconds** | Sekunde z močjo nad 150% FTP (nevromuskularna cona) |
 | **Total Power Seconds** | Skupno število sekund z veljavnimi podatki o moči |
-| **Total Work (kJ)** | Skupno mehaniško delo proizvedeno med treningom |
+| **Total Work (kJ)** | Skupno mehansko delo proizvedeno med treningom |
 | **Peak VAM** | Maksimalna hitrost vzpenjanja (m/h) na 5min, 10min, 20min |
 | **Fresh PDC** | Power krivulja iz celotnega treninga (najboljša možna moč) |
 | **Fatigued PDC** | Power krivulja po akumulaciji dela (1000/2000/3000 kJ) |
@@ -26,10 +26,10 @@ Pregled vseh metrik, ki jih PeakPower izračunava in shranjuje.
 | **Fatigue Resistance Index (FRI)** | Razmerje 5min moči po 2000 kJ vs. sveža 5min moč |
 | **Aerobic Efficiency (EF)** | Normalizirana moč na srčni utrip (W/bpm) - učinkovitost |
 | **Aerobic Decoupling** | Degradacija moč/HR od prve do druge polovice treninga |
-| **HR Drift Rate** | Hitrost dviga srčnega utripa skozi čas (bpm/min) |
+| **HR DrIF®t Rate** | Hitrost dviga srčnega utripa skozi čas (bpm/min) |
 | **Power-to-HR Slope** | Linearni odnos med močjo in srčnim utripom |
 | **Aerobic Quality Score** | Sestavljena metrika kakovosti aerobnega treninga (0.0-1.0) |
-| **W' Balance** | Sledenje depleciji anaerobne kapacitete med treningom |
+| **W' Balance** | Sledenje porabi anaerobne kapacitete med treningom |
 | **W' Recovery** | Najboljša regeneracija W' na 60s in 300s oknih |
 | **Power Density Histogram** | Distribucija moči v 10W korakih |
 | **HR Density Histogram** | Distribucija srčnega utripa v 5 bpm korakih |
@@ -73,7 +73,7 @@ Pregled vseh metrik, ki jih PeakPower izračunava in shranjuje.
 | **Density Histogram** | Histogram distribucije moči in HR |
 | **Peak Efforts Table** | Tabela najboljših naporov na različnih trajanih |
 | **Lap Table** | Tabela po krogih/intervalih |
-| **Workout Metrics Card** | Osnovne metrike (TSS, NP, avg power, duration) |
+| **Workout Metrics Card** | Osnovne metrike (TSS®, NP®, avg power, duration) |
 | **Workout Map** | GPS zemljevid z barvnim prikazom moči/HR |
 | **Peak VAM Card** | Najboljše hitrost vzpenjanja (5/10/20 min) |
 | **Intensity Domains Card** | Severe/extreme domain sekunde |
@@ -119,4 +119,4 @@ Pregled vseh metrik, ki jih PeakPower izračunava in shranjuje.
 
 ---
 
-
+TSS® (Training Stress Score®), NP® (Normalized Power®) in IF® (Intensity Factor®) so blagovne znamke podjetja TrainingPeaks, LLC. Več na trainingpeaks.com.
