@@ -1,0 +1,7 @@
+/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/deps/hello_cargo-2a68846b7a924569.d: src/main.rs src/fit_parser.rs src/averages_and_totals/mod.rs
+
+/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/deps/libhello_cargo-2a68846b7a924569.rmeta: src/main.rs src/fit_parser.rs src/averages_and_totals/mod.rs
+
+src/main.rs:
+src/fit_parser.rs:
+src/averages_and_totals/mod.rs:

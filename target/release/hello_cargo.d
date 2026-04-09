@@ -1,0 +1,1 @@
+/Users/ambrozvovk/Documents/training\ app/analiza-treningov/target/release/hello_cargo: /Users/ambrozvovk/Documents/training\ app/analiza-treningov/src/averages_and_totals/mod.rs /Users/ambrozvovk/Documents/training\ app/analiza-treningov/src/fit_parser.rs /Users/ambrozvovk/Documents/training\ app/analiza-treningov/src/main.rs

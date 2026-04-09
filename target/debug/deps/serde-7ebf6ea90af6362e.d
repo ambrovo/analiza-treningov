@@ -1,0 +1,14 @@
+/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/deps/serde-7ebf6ea90af6362e.d: /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/ambrozvovk/Documents/training\ app/analiza-treningov/target/debug/build/serde-f7820387e22cc7ff/out/private.rs
+
+/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/deps/libserde-7ebf6ea90af6362e.rlib: /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/ambrozvovk/Documents/training\ app/analiza-treningov/target/debug/build/serde-f7820387e22cc7ff/out/private.rs
+
+/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/deps/libserde-7ebf6ea90af6362e.rmeta: /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/ambrozvovk/Documents/training\ app/analiza-treningov/target/debug/build/serde-f7820387e22cc7ff/out/private.rs
+
+/Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/ambrozvovk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/ambrozvovk/Documents/training\ app/analiza-treningov/target/debug/build/serde-f7820387e22cc7ff/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/build/serde-f7820387e22cc7ff/out

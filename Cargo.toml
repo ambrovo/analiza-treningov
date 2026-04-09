@@ -1,0 +1,12 @@
+[package]
+name = "hello_cargo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+fitparser = "0.10"
+flate2 ="*"
+csv = "*"
+serde = "*"
+chrono="*"
+rayon = "*"
