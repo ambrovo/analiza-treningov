@@ -1,6 +1,6 @@
 warning: no edition set: defaulting to the 2015 edition while the latest is 2024
-   0.097608500s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2015) }
-   0.097838667s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-2b3256aac650ed01/bin-hello_cargo`
+   0.039566708s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2015) }
+   0.039581666s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-2b3256aac650ed01/bin-hello_cargo`
 
 Caused by:
     No such file or directory (os error 2)
@@ -23,8 +23,8 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-   0.119634250s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2015) }
-   0.119643084s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-fdbac96c4075dc6c/test-bin-hello_cargo`
+   0.050013875s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2015) }
+   0.050020833s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-fdbac96c4075dc6c/test-bin-hello_cargo`
 
 Caused by:
     No such file or directory (os error 2)
@@ -48,6 +48,6 @@ Stack backtrace:
   15: std::rt::lang_start_internal
   16: _main
     Checking hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)
-error: could not compile `hello_cargo` (bin "hello_cargo") due to 13 previous errors; 1 warning emitted
-warning: build failed, waiting for other jobs to finish...
 error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 13 previous errors; 1 warning emitted
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `hello_cargo` (bin "hello_cargo") due to 13 previous errors; 3 warnings emitted

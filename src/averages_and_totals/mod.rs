@@ -66,6 +66,8 @@ impl FitData {
     
     pub fn normalized_power(&self) -> MetricInt {
         //Fiziološko prilagojena moč, ki upošteva variabilnst treninga
+        //Formula ki je bila uporabljena je $NP = (\frac{1}{N} \sum_{i=1}^{N}(P_{30s, i})^4)^{\frac{1}{4}}$, 
+        //kjer je P_{30s, i} povprečna moč v zadnjih 30 sekundah pri času i, N pa število 30-sekundnih povprečij.
         let time = 30;
 
         if self.data.len() < time {
@@ -91,6 +93,7 @@ impl FitData {
     
     pub fn intensity_factor(&self, ftp: MetricInt) -> MetricInt {
         //Relativna intenziteta glede na FTP (NP®/FTP)
+        // $IF = \frac{NP}{FTP}$
         if ftp == 0 {
             return 0;
         }
@@ -115,6 +118,7 @@ impl FitData {
     
     pub fn variability_index(&self, np : MetricFloat) -> MetricFloat {
         //Mera variabilnosti moči (NP®/avg_power) - ali je trening "steady"
+        // $VI = \frac{NP}{average power}$
         let mut sum: u32 = 0;
         let mut count: u32 = 0;
 
@@ -269,6 +273,7 @@ impl FitData {
     
     pub fn peak_vam(&self) -> MetricMap {
         //Maksimalna hitrost vzpenjanja (m/h) na 5min, 10min, 20min
+        // $VAM = \frac{\delta h}{\delta t} * 3600$
         let duration: [MetricInt; 3] = [300, 600, 1200];
         let mut res: MetricMap = HashMap::new();
 
@@ -401,7 +406,7 @@ impl FitData {
     pub fn aerobic_quality_score(&self, variability_index : MetricFloat) {
         let duration_factor = self.data.len();
 
-        let steadiness = 
+        1.0
     }
     
     pub fn w_balance(&self) {}
@@ -430,3 +435,4 @@ impl FitData {
     
     pub fn workout_archetype(&self) {}
 }
+
