@@ -7,6 +7,16 @@ use chrono::{DateTime, Local};
 
 /// Strongly typed FIT record with optional values
 #[derive(Debug)]
+pub enum MetricType {
+    HeartRate,
+    Cadence,
+    Power,
+    EnhancedSpeed,
+    EnhancedAltitude,
+    EnhancedRespirationRate,
+    Temperature,
+    Distance,
+}
 pub struct FitRecord {
     pub timestamp: Option<DateTime<Local>>,
     pub heart_rate: Option<u8>,

@@ -1,7 +1,10 @@
+use chrono::Duration;
+
 use crate::fit_parser::FitRecord;
-use std::collections::HashMap;
+use std::{collections::HashMap, ptr::null};
 
 pub type MetricInt = u32;
+pub type MetricFloat = f64;
 pub type MetricMap = HashMap<MetricInt, MetricInt>;
 pub type NestedMetricMap = HashMap<MetricInt, MetricMap>;
 
@@ -96,22 +99,21 @@ impl FitData {
         (np * 1000) / ftp
     }
     
-    pub fn training_stress_score(&self, ftp: MetricInt) -> MetricInt {
+    pub fn training_stress_score(&self, ftp: MetricFloat, np : MetricFloat, duration: MetricInt) -> MetricFloat {
         //Obremenitev treninga (1 ura pri FTP = 100 TSS®)
-        if ftp == 0 {
-            return 0;
+        if ftp == 0.0 {
+            return 0.0;
         }
 
-        let duration = self.data.len() as f32;
-        let np = self.normalized_power() as f32;
-        let ftp = ftp as f32;
+        
+       
 
-        let tss = (duration * np * np) / (ftp * ftp * 3600.0) * 100.0;
+        let tss = (duration as f64 * np * np) / (ftp * ftp * 3600.0) * 100.0;
 
-        (tss * 10.0).round() as u32
+        tss
     }
     
-    pub fn variability_index(&self) -> MetricInt {
+    pub fn variability_index(&self, np : MetricFloat) -> MetricFloat {
         //Mera variabilnosti moči (NP®/avg_power) - ali je trening "steady"
         let mut sum: u32 = 0;
         let mut count: u32 = 0;
@@ -124,19 +126,19 @@ impl FitData {
         }
 
         if count == 0 {
-            return 0;
+            return 0.0;
         }
 
-        let avg_power = sum as f32 / count as f32;
-        let np = self.normalized_power() as f32;
+        let avg_power = sum as f64 / count as f64;
+       
 
         if avg_power == 0.0 {
-            return 0;
+            return 0.0;
         }
 
         let vi = np / avg_power;
 
-        (vi * 1000.0).round() as u32
+        vi
     }
     
     pub fn power_zone_distribution(&self, ftp: MetricInt) -> MetricMap {
@@ -305,24 +307,102 @@ impl FitData {
     
     
     
-    pub fn fatigue_resistance_drops(&self) -> NestedMetricMap {
-        let mut res:NestedMetricMap = HashMap::new();
-        let fresh
+    pub fn fatigue_resistance_drops(&self)  {
+ 
     }
     
-    pub fn fatigue_resistance_index(&self) -> MetricInt {
-        to_do()
+    pub fn fatigue_resistance_index(&self)   {
+    
     }
     
-    pub fn aerobic_efficiency(&self) -> MetricInt {}
+    pub fn average_power_of(data: &[FitRecord]) -> MetricFloat {
+        let mut total = 0; 
+        for i in 0..data.len() {
+            total += data[i].power.unwrap_or(0)
+        }; 
+        total as f64/data.len()   as f64
+    }
+    pub fn average_hr_of(data: &[FitRecord]) -> MetricFloat {
+        let mut total = 0; 
+        for i in 0..data.len() {
+            total += data[i].heart_rate.unwrap_or(0)
+        }; 
+        (total as  f64)/(data.len() as f64)  
+    }
+
+    pub fn aerobic_efficiency(&self) -> MetricFloat {
+        //Povprečna moč : Povprečni srčni utrip.
+        Self::average_power_of(&self.data)/Self::average_hr_of(&self.data) 
+    }
     
-    pub fn aerobic_decoupling(&self) {}
+    pub fn aerobic_decoupling(&self) -> MetricFloat {
+        let mid = self.data.len() / 2;
+        let ef1 = Self::average_power_of(&self.data[..mid]) / Self::average_hr_of(&self.data[..mid]);
+        let ef2 = Self::average_power_of(&self.data[mid..]) / Self::average_hr_of(&self.data[mid..]);
+        ((ef1 - ef2) / ef1)  * 100.0
+    }
     
-    pub fn hr_drift_rate(&self) {}
+    pub fn hr_drift_rate(&self) -> MetricFloat{
+    let mut n = 0.0;
+    let mut sum_x = 0.0;
+    let mut sum_y = 0.0;
+    let mut sum_xy = 0.0;
+    let mut sum_xx = 0.0;
+
+    let start = self.data.first()?.timestamp?;
+
+    for r in &self.data {
+        if let (Some(ts), Some(hr)) = (r.timestamp, r.heart_rate) {
+            let x = (ts - start).num_seconds() as f64 / 60.0; // minutes
+            let y = hr as f64;
+            n += 1.0;
+            sum_x += x;
+            sum_y += y;
+            sum_xy += x * y;
+            sum_xx += x * x;
+        }
+    }
+
+    if n < 2.0 { return 0.0; }
+
+    // slope = (n * Σxy - Σx * Σy) / (n * Σx² - (Σx)²)
+    let slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+
+    slope
+    }
     
-    pub fn power_hr_slope(&self) {}
+    pub fn power_hr_slope(&self) -> MetricFloat{
+        let mut n = 0.0;
+    let mut sum_x = 0.0;
+    let mut sum_y = 0.0;
+    let mut sum_xy = 0.0;
+    let mut sum_xx = 0.0;
+
+    for r in &self.data {                                     
+      if let (Some(power), Some(hr)) = (r.power, r.heart_rate) {
+          let x = power as f64;
+          let y = hr as f64;                                        
+          n += 1.0;
+          sum_x += x;                                               
+          sum_y += y;
+          sum_xy += x * y;
+          sum_xx += x * x;
+      }
+  }
+
+    if n < 2.0 { return 0.0; }
+
+   
+    let slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+
+    slope
+    }
     
-    pub fn aerobic_quality_score(&self) {}
+    pub fn aerobic_quality_score(&self, variability_index : MetricFloat) {
+        let duration_factor = self.data.len();
+
+        let steadiness = 
+    }
     
     pub fn w_balance(&self) {}
     

@@ -26,7 +26,7 @@ Pregled vseh metrik, ki jih PeakPower izračunava in shranjuje.
 | **Fatigue Resistance Index (FRI)** | Razmerje 5min moči po 2000 kJ vs. sveža 5min moč |
 | **Aerobic Efficiency (EF)** | Normalizirana moč na srčni utrip (W/bpm) - učinkovitost |
 | **Aerobic Decoupling** | Degradacija moč/HR od prve do druge polovice treninga |
-| **HR DrIF®t Rate** | Hitrost dviga srčnega utripa skozi čas (bpm/min) |
+| **HR DrIFt Rate** | Hitrost dviga srčnega utripa skozi čas (bpm/min) |
 | **Power-to-HR Slope** | Linearni odnos med močjo in srčnim utripom |
 | **Aerobic Quality Score** | Sestavljena metrika kakovosti aerobnega treninga (0.0-1.0) |
 | **W' Balance** | Sledenje porabi anaerobne kapacitete med treningom |
