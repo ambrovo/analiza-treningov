@@ -175,7 +175,7 @@ impl FitData {
     
     pub fn heart_rate_zone_distribution(&self, max_hr: MetricInt) -> MetricMap {
         //Čas (sekunde) v vsaki srčni coni (Z1-Z5)
-        let mut res: MetricMap::new();
+        let mut res: MetricMap = HashMap::new();
 
         if max_hr == 0 {
             return res;
@@ -203,56 +203,150 @@ impl FitData {
         res
     }
     
-    pub fn severe_domain_seconds(data: &[FitRecord]) {}
+    pub fn severe_domain_seconds(&self, ftp: MetricInt) -> MetricInt {
+        //Sekunde z močjo nad FTP
+        if ftp == 0 {
+            return 0;
+        };
+
+        let mut seconds: u32 = 0;
+
+        for r in &self.data {
+            if let Some(p) = r.power {
+                if p as u32 > ftp {
+                    seconds += 1
+                }
+            }
+        };
+
+        seconds
+    }
     
-    pub fn extreme_domain_seconds(data: &[FitRecord]) {}
+    pub fn extreme_domain_seconds(&self, ftp: MetricInt) -> MetricInt {
+        //Sekunde z močjo nad 150% FTP (nevromuskularna cona)
+        if ftp == 0 {
+            return 0;
+        };
+
+        let mut seconds: u32 = 0;
+
+        for r in &self.data {
+            if let Some(p) = r.power {
+                if p as f32 > (ftp as f32 * 3.0) / 2.0 {
+                    seconds += 1
+                }
+            }
+        };
+
+        seconds
+    }
     
-    pub fn total_power_seconds(data: &[FitRecord]) {}
+    pub fn total_power_seconds(&self) -> MetricInt {
+        //Skupno število sekund z veljavnimi podatki o moči
+        let mut seconds: u32 = 0;
+
+        for r in &self.data {
+            if r.power.is_some() {
+                seconds += 1
+            }
+        };
+
+        seconds
+    }
     
-    pub fn total_work(data: &[FitRecord]) {}
+    pub fn total_work(&self) -> MetricInt {
+        //Skupno mehansko delo proizvedeno med treningom
+        let total_joules: u32 = self.data
+        .iter()
+        .filter_map(|r| r.power)
+        .map(|p| p as u32)
+        .sum();
+
+        (total_joules / 1000) as u32
+    }
     
-    pub fn peak_vam(data: &[FitRecord]) {}
+    pub fn peak_vam(&self) -> MetricMap {
+        //Maksimalna hitrost vzpenjanja (m/h) na 5min, 10min, 20min
+        let duration: [MetricInt; 3] = [300, 600, 1200];
+        let mut res: MetricMap = HashMap::new();
+
+        for d in duration {
+            let mut max_vam = 0.0;
+
+            if self.data.len() < d as usize {
+                continue;
+            }
+
+            for i in d as usize..self.data.len() {
+                if let (Some(curr_alt), Some(prev_alt)) = (
+                    self.data[i].enhanced_altitude,
+                    self.data[i - d as usize].enhanced_altitude,
+                ) {
+                    let delta_h = curr_alt - prev_alt;
+
+                    if delta_h > 0.0 {
+                        let vam = (delta_h / d as f64) * 3600.0;
+
+                        if vam > max_vam {
+                            max_vam = vam;
+                        }
+                    }
+                }
+            }
+
+            if max_vam > 0.0 {
+                res.insert(d, max_vam.round() as u32);
+            }
+        }
+
+        res
+    }
     
     
     
     
-    pub fn fatigue_resistance_drops(data: &[FitRecord]){}
+    pub fn fatigue_resistance_drops(&self) -> NestedMetricMap {
+        let mut res:NestedMetricMap = HashMap::new();
+        let fresh
+    }
     
-    pub fn fatigue_resistance_index(data: &[FitRecord]) {}
+    pub fn fatigue_resistance_index(&self) -> MetricInt {
+        to_do()
+    }
     
-    pub fn aerobic_efficiency(data: &[FitRecord]) {}
+    pub fn aerobic_efficiency(&self) -> MetricInt {}
     
-    pub fn aerobic_decoupling(data: &[FitRecord]) {}
+    pub fn aerobic_decoupling(&self) {}
     
-    pub fn hr_drift_rate(data: &[FitRecord]) {}
+    pub fn hr_drift_rate(&self) {}
     
-    pub fn power_hr_slope(data: &[FitRecord]) {}
+    pub fn power_hr_slope(&self) {}
     
-    pub fn aerobic_quality_score(data: &[FitRecord]) {}
+    pub fn aerobic_quality_score(&self) {}
     
-    pub fn w_balance(data: &[FitRecord]) {}
+    pub fn w_balance(&self) {}
     
-    pub fn w_recovery(data: &[FitRecord]) {}
+    pub fn w_recovery(&self) {}
     
-    pub fn power_density_histogram(data: &[FitRecord]) {}
+    pub fn power_density_histogram(&self) {}
     
-    pub fn hr_density_histogram(data: &[FitRecord]) {}
+    pub fn hr_density_histogram(&self) {}
     
-    pub fn compound_score(data: &[FitRecord]) {}
+    pub fn compound_score(&self) {}
     
-    pub fn durability_ratio(data: &[FitRecord]) {}
+    pub fn durability_ratio(&self) {}
     
-    pub fn power_coverage(data: &[FitRecord]) {}
+    pub fn power_coverage(&self) {}
     
-    pub fn hr_coverage(data: &[FitRecord]) {}
+    pub fn hr_coverage(&self) {}
     
-    pub fn power_spike_count(data: &[FitRecord]) {}
+    pub fn power_spike_count(&self) {}
     
-    pub fn hr_dropout_seconds(data: &[FitRecord]) {}
+    pub fn hr_dropout_seconds(&self) {}
     
-    pub fn data_quality_score(data: &[FitRecord]) {}
+    pub fn data_quality_score(&self) {}
     
-    pub fn load_ayes(data: &[FitRecord]) {}
+    pub fn load_ayes(&self) {}
     
-    pub fn workout_archetype(data: &[FitRecord]) {}
+    pub fn workout_archetype(&self) {}
 }

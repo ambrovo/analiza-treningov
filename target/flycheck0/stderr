@@ -1,9 +1,9 @@
 warning: no edition set: defaulting to the 2015 edition while the latest is 2021
-   0.122500600s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\rl59453\\analiza-treningov\\src/main.rs", Edition2015) }
-   0.122549300s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
-   0.146186700s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\rl59453\\analiza-treningov\\src/main.rs", Edition2015) }
-   0.146215300s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
+   0.123693400s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\rl59453\\analiza-treningov\\src/main.rs", Edition2015) }
+   0.123750200s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
+   0.145196300s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\rl59453\\analiza-treningov\\src/main.rs", Edition2015) }
+   0.145220300s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
     Checking hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)
-error: could not compile `hello_cargo` (bin "hello_cargo") due to 10 previous errors; 25 warnings emitted
+error: could not compile `hello_cargo` (bin "hello_cargo") due to 12 previous errors
 warning: build failed, waiting for other jobs to finish...
-error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 10 previous errors; 25 warnings emitted
+error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 12 previous errors
