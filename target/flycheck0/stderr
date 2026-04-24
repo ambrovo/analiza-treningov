@@ -1,9 +1,61 @@
-warning: no edition set: defaulting to the 2015 edition while the latest is 2021
-   0.123693400s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\rl59453\\analiza-treningov\\src/main.rs", Edition2015) }
-   0.123750200s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
-   0.145196300s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\rl59453\\analiza-treningov\\src/main.rs", Edition2015) }
-   0.145220300s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
-    Checking hello_cargo v0.1.0 (C:\Users\rl59453\analiza-treningov)
-error: could not compile `hello_cargo` (bin "hello_cargo") due to 12 previous errors
+warning: no edition set: defaulting to the 2015 edition while the latest is 2024
+   0.043939900s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\Riccardo\\Documents\\Uni\\analiza-treningov\\src\\main.rs", Edition2015) }
+   0.043982900s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Riccardo\Documents\Uni\analiza-treningov\target\debug\.fingerprint\hello_cargo-7219c4df29e63f2b\bin-hello_cargo`
+
+Caused by:
+    Impossibile trovare il file specificato. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_repo
+   6: git_filter_source_repo
+   7: git_filter_source_repo
+   8: git_filter_source_repo
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_libgit2_prerelease
+  12: <unknown>
+  13: <unknown>
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+   0.061834800s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\Riccardo\\Documents\\Uni\\analiza-treningov\\src\\main.rs", Edition2015) }
+   0.061852600s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Riccardo\Documents\Uni\analiza-treningov\target\debug\.fingerprint\hello_cargo-e1fffe730c0cdc5f\test-bin-hello_cargo`
+
+Caused by:
+    Impossibile trovare il file specificato. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_repo
+   6: git_filter_source_repo
+   7: git_filter_source_repo
+   8: git_filter_source_repo
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_libgit2_prerelease
+  12: <unknown>
+  13: <unknown>
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+    Checking hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)
+error: could not compile `hello_cargo` (bin "hello_cargo") due to 14 previous errors; 2 warnings emitted
 warning: build failed, waiting for other jobs to finish...
-error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 12 previous errors
+error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 14 previous errors; 2 warnings emitted

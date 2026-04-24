@@ -1,5 +1,6 @@
 mod fit_parser; // assuming fit_parser.rs is in the same folder
-mod averages_and_totals;
+pub mod averages_and_totals;
+mod testi;
 use std::fs;
 use std::time::Instant;
 use rayon::prelude::*;
