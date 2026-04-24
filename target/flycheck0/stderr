@@ -1,53 +1,12 @@
-warning: no edition set: defaulting to the 2015 edition while the latest is 2024
-   0.039566708s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2015) }
-   0.039581666s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-2b3256aac650ed01/bin-hello_cargo`
-
-Caused by:
-    No such file or directory (os error 2)
-
-Stack backtrace:
-   0: std::backtrace::Backtrace::create
-   1: cargo_util::paths::read_bytes
-   2: cargo_util::paths::read
-   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
-   4: cargo::core::compiler::fingerprint::prepare_target
-   5: cargo::core::compiler::compile
-   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
-   7: cargo::ops::cargo_compile::compile_ws
-   8: cargo::ops::cargo_compile::compile_with_exec
-   9: cargo::ops::cargo_compile::compile
-  10: cargo::commands::check::exec
-  11: <cargo::cli::Exec>::exec
-  12: cargo::main
-  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
-  14: std::rt::lang_start::<()>::{closure#0}
-  15: std::rt::lang_start_internal
-  16: _main
-   0.050013875s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2015) }
-   0.050020833s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-fdbac96c4075dc6c/test-bin-hello_cargo`
-
-Caused by:
-    No such file or directory (os error 2)
-
-Stack backtrace:
-   0: std::backtrace::Backtrace::create
-   1: cargo_util::paths::read_bytes
-   2: cargo_util::paths::read
-   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
-   4: cargo::core::compiler::fingerprint::prepare_target
-   5: cargo::core::compiler::compile
-   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
-   7: cargo::ops::cargo_compile::compile_ws
-   8: cargo::ops::cargo_compile::compile_with_exec
-   9: cargo::ops::cargo_compile::compile
-  10: cargo::commands::check::exec
-  11: <cargo::cli::Exec>::exec
-  12: cargo::main
-  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
-  14: std::rt::lang_start::<()>::{closure#0}
-  15: std::rt::lang_start_internal
-  16: _main
+   0.156067750s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: stale: changed "/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs"
+   0.156076250s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:           (vs) "/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-8549dacaf773885f/dep-bin-hello_cargo"
+   0.156079167s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1777050897, nanos: 829916856 } < FileTime { seconds: 1777051210, nanos: 42402782 }
+   0.156447250s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2021) }
+   0.156832625s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-8549dacaf773885f/dep-bin-hello_cargo", reference_mtime: FileTime { seconds: 1777050897, nanos: 829916856 }, stale: "/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", stale_mtime: FileTime { seconds: 1777051210, nanos: 42402782 } }))
+   0.167191958s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: stale: changed "/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs"
+   0.167195792s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:           (vs) "/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-2a68846b7a924569/dep-test-bin-hello_cargo"
+   0.167197375s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1777050897, nanos: 829905064 } < FileTime { seconds: 1777051210, nanos: 42402782 }
+   0.167875958s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint dirty for hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", Edition2021) }
+   0.167885125s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/Users/ambrozvovk/Documents/training app/analiza-treningov/target/debug/.fingerprint/hello_cargo-2a68846b7a924569/dep-test-bin-hello_cargo", reference_mtime: FileTime { seconds: 1777050897, nanos: 829905064 }, stale: "/Users/ambrozvovk/Documents/training app/analiza-treningov/src/main.rs", stale_mtime: FileTime { seconds: 1777051210, nanos: 42402782 } }))
     Checking hello_cargo v0.1.0 (/Users/ambrozvovk/Documents/training app/analiza-treningov)
-error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 13 previous errors; 1 warning emitted
-warning: build failed, waiting for other jobs to finish...
-error: could not compile `hello_cargo` (bin "hello_cargo") due to 13 previous errors; 3 warnings emitted
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.37s
