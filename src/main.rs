@@ -6,7 +6,7 @@ use std::time::Instant;
 use rayon::prelude::*;
 use std::collections::HashMap;
 
-use crate::averages_and_totals::{NestedMetricMap, fatigued_pdc, power_duration_curve};
+use crate::averages_and_totals::{NestedMetricMap, fatigued_pdc , power_duration_curve};
 
 
 pub struct GraphData {
