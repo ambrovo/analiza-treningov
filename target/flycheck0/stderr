@@ -1,6 +1,6 @@
 warning: no edition set: defaulting to the 2015 edition while the latest is 2024
-   0.043939900s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\Riccardo\\Documents\\Uni\\analiza-treningov\\src\\main.rs", Edition2015) }
-   0.043982900s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Riccardo\Documents\Uni\analiza-treningov\target\debug\.fingerprint\hello_cargo-7219c4df29e63f2b\bin-hello_cargo`
+   0.097934100s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)/Check { test: false }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\Riccardo\\Documents\\Uni\\analiza-treningov\\src\\main.rs", Edition2015) }
+   0.097981000s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Riccardo\Documents\Uni\analiza-treningov\target\debug\.fingerprint\hello_cargo-7219c4df29e63f2b\bin-hello_cargo`
 
 Caused by:
     Impossibile trovare il file specificato. (os error 2)
@@ -27,8 +27,8 @@ Stack backtrace:
   18: git_midx_writer_dump
   19: BaseThreadInitThunk
   20: RtlUserThreadStart
-   0.061834800s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\Riccardo\\Documents\\Uni\\analiza-treningov\\src\\main.rs", Edition2015) }
-   0.061852600s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Riccardo\Documents\Uni\analiza-treningov\target\debug\.fingerprint\hello_cargo-e1fffe730c0cdc5f\test-bin-hello_cargo`
+   0.116657000s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint: fingerprint error for hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)/Check { test: true }/TargetInner { name: "hello_cargo", doc: true, ..: with_path("C:\\Users\\Riccardo\\Documents\\Uni\\analiza-treningov\\src\\main.rs", Edition2015) }
+   0.116678100s  INFO prepare_target{force=false package_id=hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov) target="hello_cargo"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Riccardo\Documents\Uni\analiza-treningov\target\debug\.fingerprint\hello_cargo-e1fffe730c0cdc5f\test-bin-hello_cargo`
 
 Caused by:
     Impossibile trovare il file specificato. (os error 2)
@@ -58,4 +58,4 @@ Stack backtrace:
     Checking hello_cargo v0.1.0 (C:\Users\Riccardo\Documents\Uni\analiza-treningov)
 error: could not compile `hello_cargo` (bin "hello_cargo") due to 14 previous errors; 2 warnings emitted
 warning: build failed, waiting for other jobs to finish...
-error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 14 previous errors; 2 warnings emitted
+error: could not compile `hello_cargo` (bin "hello_cargo" test) due to 14 previous errors
