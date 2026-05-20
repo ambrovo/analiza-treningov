@@ -7,10 +7,12 @@ use std::fs;
 use std::time::Instant;
 use rayon::prelude::*;
 use std::collections::HashMap;
+use serde::Serialize;
 use crate::averages_and_totals::*;
 use crate::fit_parser::FitRecord;
 use crate::print_result::print_result;
 
+#[derive(Serialize)]
 pub struct AnalysisResult {
     pub filename: String,
     pub duration_seconds: u32,
@@ -38,7 +40,7 @@ pub struct AnalysisResult {
     pub w_recovery_kj: MetricFloat,
 }
 
-fn analyze(path: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) -> Result<AnalysisResult, Box<dyn std::error::Error>> {
+pub fn analyze(path: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) -> Result<AnalysisResult, Box<dyn std::error::Error>> {
     let data: Vec<FitRecord> = fit_parser::parse_fit_file(path)?;
 
     let avg_p = average_power_of(&data);
@@ -81,7 +83,7 @@ fn analyze(path: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) -> Result
 
 
 
-fn analyze_all(folder: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) {
+pub fn analyze_all(folder: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) -> Vec<AnalysisResult> {
     let files: Vec<_> = fs::read_dir(folder)
         .expect("Cannot read folder")
         .filter_map(|e| e.ok())
@@ -99,13 +101,7 @@ fn analyze_all(folder: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) {
         })
         .collect();
 
-    println!("\nAnalyzed {} files\n", results.len());
-
-    
-    print_result(&results[0]);
-    println!();
-
-   
+    results
 }
 
 fn main() {
@@ -115,6 +111,10 @@ fn main() {
     let w_prime_j: u32 = 20000; // W' in joules (20 kJ)
 
     let start = Instant::now();
-    analyze_all("test", ftp, max_hr, w_prime_j, cp);
+    let results = analyze_all("test", ftp, max_hr, w_prime_j, cp);
+    println!("\nAnalyzed {} files\n", results.len());
+    if !results.is_empty() {
+        print_result(&results[0]);
+    }
     println!("Total time: {:?}", start.elapsed());
 }

@@ -1,11 +1,20 @@
 [package]
-name = "hello_cargo"
+name = "analiza-treningov"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name = "analiza-treningov"
+path = "src/main.rs"
+
+[lib]
+name = "analiza_treningov"
+path = "src/lib.rs"
+
 [dependencies]
 fitparser = "0.10"
-flate2 ="*"
+flate2 = "*"
 csv = "*"
-serde = "*"
-chrono="*"
+serde = { version = "*", features = ["derive"] }
+chrono = "*"
 rayon = "*"
