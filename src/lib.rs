@@ -16,6 +16,7 @@ mod main_logic {
     #[derive(Serialize)]
     pub struct AnalysisResult {
         pub filename: String,
+        pub workout_date: Option<String>,  // ISO date from first FIT record timestamp
         pub duration_seconds: u32,
         pub total_work_kj: u32,
         pub total_power_seconds: u32,
@@ -41,8 +42,12 @@ mod main_logic {
         pub w_recovery_kj: MetricFloat,
     }
 
-    pub fn analyze(path: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) -> Result<AnalysisResult, Box<dyn std::error::Error>> {
+    pub fn analyze(path: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32, zone_thresholds: &[u32]) -> Result<AnalysisResult, Box<dyn std::error::Error>> {
         let data: Vec<FitRecord> = crate::fit_parser::parse_fit_file(path)?;
+
+        let workout_date = data.iter()
+            .find_map(|r| r.timestamp.as_ref())
+            .map(|dt| dt.format("%Y-%m-%d").to_string());
 
         let avg_p = average_power_of(&data);
         let avg_h = average_hr_of(&data);
@@ -55,6 +60,7 @@ mod main_logic {
 
         Ok(AnalysisResult {
             filename: path.to_string(),
+            workout_date,
             duration_seconds: data.len() as u32,
             total_work_kj: total_work(&data),
             total_power_seconds: total_power_seconds(&data),
@@ -71,7 +77,7 @@ mod main_logic {
             power_hr_slope: power_hr_slope(&data),
             severe_seconds: severe_domain_seconds(&data, ftp),
             extreme_seconds: extreme_domain_seconds(&data, ftp),
-            power_zones: power_zone_distribution(&data, ftp),
+            power_zones: power_zone_distribution(&data, zone_thresholds),
             hr_zones: heart_rate_zone_distribution(&data, max_hr),
             pdc: power_duration_curve(&data, 0),
             fatigued_pdc: fatigued_pdc(&data),
@@ -81,7 +87,7 @@ mod main_logic {
         })
     }
 
-    pub fn analyze_all(folder: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32) -> Vec<AnalysisResult> {
+    pub fn analyze_all(folder: &str, ftp: u32, max_hr: u32, w_prime_j: u32, cp: u32, zone_thresholds: &[u32]) -> Vec<AnalysisResult> {
         let files: Vec<_> = fs::read_dir(folder)
             .expect("Cannot read folder")
             .filter_map(|e| e.ok())
@@ -95,7 +101,7 @@ mod main_logic {
         files.par_iter()
             .filter_map(|entry| {
                 let path = entry.path();
-                analyze(&path.to_string_lossy(), ftp, max_hr, w_prime_j, cp).ok()
+                analyze(&path.to_string_lossy(), ftp, max_hr, w_prime_j, cp, zone_thresholds).ok()
             })
             .collect()
     }

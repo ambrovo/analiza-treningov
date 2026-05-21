@@ -49,9 +49,23 @@ pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::
     let mut reader = BufReader::new(reader);
 
     let mut records: Vec<FitRecord> = Vec::new();
+    let mut session_start: Option<DateTime<Local>> = None;
 
     for record in from_reader(&mut reader)? {
-        
+
+        // Capture session start_time as fallback for workout date
+        if record.kind() == MesgNum::Session || record.kind() == MesgNum::Activity {
+            for field in record.fields() {
+                if field.name() == "start_time" || field.name() == "timestamp" {
+                    if let Value::Timestamp(dt) = field.value() {
+                        if session_start.is_none() {
+                            session_start = Some(*dt);
+                        }
+                    }
+                }
+            }
+        }
+
         if record.kind() == MesgNum::Record {
             let mut rec = FitRecord {
           
@@ -101,6 +115,10 @@ pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::
             }
    
 
+            // Use session_start as fallback if record has no timestamp
+            if rec.timestamp.is_none() {
+                rec.timestamp = session_start;
+            }
             records.push(rec);
         }
     }

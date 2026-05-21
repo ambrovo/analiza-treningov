@@ -40,7 +40,7 @@ pub struct FitData {
 
 pub fn power_duration_curve(data: &[FitRecord], start_index: usize) -> MetricMap {
     // maksimalna moč glede na standardna časovna okna
-    let durations: [MetricInt; 11] = [1, 3, 5, 30, 60, 120, 300, 600, 1800, 3600, 7200];
+    let durations: [MetricInt; 12] = [1, 3, 5, 30, 60, 120, 300, 600, 1200,1800, 3600, 7200];
     
     let mut res: MetricMap = HashMap::new();
     
@@ -55,7 +55,7 @@ pub fn power_duration_curve(data: &[FitRecord], start_index: usize) -> MetricMap
                 data[i as usize].accumulated_power, 
                 data[(i - (d as usize)) as usize].accumulated_power
             ) {
-                let diff = curr - prev;
+                let diff = curr.saturating_sub(prev);
                 if diff > m {
                     m = diff;
                 }
@@ -178,35 +178,19 @@ pub fn variability_index(data: &[FitRecord], np : MetricFloat) -> MetricFloat {
     vi
 }
     
-pub fn power_zone_distribution(data: &[FitRecord], ftp: MetricInt) -> MetricMap {
-    //Čas (sekunde) v vsaki moč coni (Z1-Z7)
+pub fn power_zone_distribution(data: &[FitRecord], zone_thresholds: &[u32]) -> MetricMap {
+    //Čas (sekunde) v vsaki moč coni — meje con so podane od zunaj (iz Angular zone konfiguracije)
     let mut res: MetricMap = HashMap::new();
+    if zone_thresholds.is_empty() { return res; }
 
-    if ftp == 0 {
-        return res;
-    }
     for r in data {
         if let Some(p) = r.power {
-            let ratio = p as f32 / ftp as f32;
-            let zone = if ratio < 0.55 {
-                1
-            } else if ratio < 0.75 {
-                2
-            } else if ratio < 0.90 {
-                3
-            } else if ratio < 1.05 {
-                4
-            } else if ratio < 1.20 {
-                5
-            } else if ratio < 1.50 {
-                6
-            } else {
-                7
-            };
+            let p = p as u32;
+            let zone = (zone_thresholds.iter().position(|&t| p <= t)
+                .unwrap_or(zone_thresholds.len()) + 1) as u32;
             *res.entry(zone).or_insert(0) += 1;
         }
-    };
-        
+    }
     res
 }
     
