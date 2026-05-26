@@ -11,6 +11,7 @@ path = "src/main.rs"
 name = "analiza_treningov"
 path = "src/lib.rs"
 
+
 [dependencies]
 fitparser = "0.10"
 flate2 = "*"

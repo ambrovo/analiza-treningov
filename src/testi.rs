@@ -196,31 +196,37 @@ mod tests {
     // --- power_zone_distribution ---
     #[test]
     fn test_power_zones() {
-        let ftp = 200;
+        let thresholds = PowerZoneThresholds {
+            zone_1: 0, zone_2a: 110, zone_2b: 150,
+            zone_3: 180, zone_4: 210, zone_5: 240, zone_6: 300, zone_7: 400,
+        };
         let records = vec![
-            create_mock_record(100, 100),  // 50% -> Z1
-            create_mock_record(160, 260),  // 80% -> Z3
-            create_mock_record(220, 480),  // 110% -> Z5
+            create_mock_record(100, 100),  // < 110  -> zone_1
+            create_mock_record(160, 260),  // 150-180 -> zone_2b
+            create_mock_record(220, 480),  // 210-240 -> zone_4
         ];
-        let zones = power_zone_distribution(&records, ftp);
-        assert_eq!(*zones.get(&1).unwrap_or(&0), 1);
-        assert_eq!(*zones.get(&3).unwrap_or(&0), 1);
-        assert_eq!(*zones.get(&5).unwrap_or(&0), 1);
+        let zones = power_zone_distribution(&records, &thresholds);
+        assert_eq!(zones.zone_1, 1);
+        assert_eq!(zones.zone_2b, 1);
+        assert_eq!(zones.zone_4, 1);
     }
 
     // --- heart_rate_zone_distribution ---
     #[test]
     fn test_hr_zones() {
-        let max_hr = 200;
+        let thresholds = HrZoneTresholds {
+            zone_1: 0, zone_2a: 114, zone_2b: 133,
+            zone_3: 152, zone_4: 165, zone_5: 177,
+        };
         let records = vec![
-            create_record_with_hr(200, 100, 200),  // 50% -> Z1
-            create_record_with_hr(200, 150, 400),  // 75% -> Z3
-            create_record_with_hr(200, 185, 600),  // 92.5% -> Z5
+            create_record_with_hr(200, 100, 200),  // < 114  -> zone_1
+            create_record_with_hr(200, 150, 400),  // 133-152 -> zone_2b
+            create_record_with_hr(200, 185, 600),  // > 177  -> zone_5
         ];
-        let zones = heart_rate_zone_distribution(&records, max_hr);
-        assert_eq!(*zones.get(&1).unwrap_or(&0), 1);
-        assert_eq!(*zones.get(&3).unwrap_or(&0), 1);
-        assert_eq!(*zones.get(&5).unwrap_or(&0), 1);
+        let zones = heart_rate_zone_distribution(&records, &thresholds);
+        assert_eq!(zones.zone_1, 1);
+        assert_eq!(zones.zone_2b, 1);
+        assert_eq!(zones.zone_5, 1);
     }
 
     // --- severe_domain_seconds ---

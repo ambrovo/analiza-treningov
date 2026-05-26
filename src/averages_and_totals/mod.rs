@@ -1,12 +1,14 @@
 
 
 use crate::fit_parser::FitRecord;
-use std::{collections::HashMap, ptr::null};
+use std::collections::HashMap;
+use serde::Serialize;
 
 pub type MetricInt = u32;
 pub type MetricFloat = f64;
 pub type MetricMap = HashMap<MetricInt, MetricInt>;
 pub type NestedMetricMap = HashMap<MetricInt, MetricMap>;
+#[derive(Serialize)]
 pub struct Graph {
     pub name: String,
     pub x_axis: Axis,
@@ -14,11 +16,13 @@ pub struct Graph {
     pub series: HashMap<String, Vec<(f64, f64)>>, // name -> [(x, y)]
 }
 
+#[derive(Serialize)]
 pub struct Axis {
     pub label: String,
     pub unit: Unit,
 }
 
+#[derive(Serialize)]
 pub enum Unit {
     Watts,
     Bpm,
@@ -36,7 +40,27 @@ pub enum Unit {
 pub struct FitData {
     pub data: Vec<FitRecord>,
 }
-
+#[derive(Serialize)]
+pub struct PowerZoneThresholds {
+        pub zone_1 : u32,
+        pub zone_2a : u32,
+        pub zone_2b : u32,
+        pub zone_3 : u32,
+        pub zone_4 : u32,
+        pub zone_5 : u32,
+        pub zone_6 : u32,
+        pub zone_7 : u32,
+    }
+#[derive(Serialize)]
+pub struct HrZoneTresholds {
+        pub zone_1 : u32,
+        pub zone_2a : u32,
+        pub zone_2b : u32,
+        pub zone_3 : u32,
+        pub zone_4 : u32,
+        pub zone_5 : u32,
+       
+    }
 
 pub fn power_duration_curve(data: &[FitRecord], start_index: usize) -> MetricMap {
     // maksimalna moč glede na standardna časovna okna
@@ -178,48 +202,81 @@ pub fn variability_index(data: &[FitRecord], np : MetricFloat) -> MetricFloat {
     vi
 }
     
-pub fn power_zone_distribution(data: &[FitRecord], zone_thresholds: &[u32]) -> MetricMap {
-    //Čas (sekunde) v vsaki moč coni — meje con so podane od zunaj (iz Angular zone konfiguracije)
-    let mut res: MetricMap = HashMap::new();
-    if zone_thresholds.is_empty() { return res; }
+pub fn power_zone_distribution(data: &[FitRecord], z: &PowerZoneThresholds) -> PowerZoneThresholds {
+  
+    const MAX_POWER: usize = 3001; 
 
-    for r in data {
-        if let Some(p) = r.power {
-            let p = p as u32;
-            let zone = (zone_thresholds.iter().position(|&t| p <= t)
-                .unwrap_or(zone_thresholds.len()) + 1) as u32;
-            *res.entry(zone).or_insert(0) += 1;
-        }
+    // vektor za vsako moč : število sekund na tej moči
+    let mut histogram = vec![0u32; MAX_POWER];
+    for record in data.iter() {
+        let power = record.power.unwrap_or(0) as usize;
+        histogram[power] += 1;
     }
+
+    //  
+    let mut accumulative_histogram = vec![0u32; MAX_POWER + 1];
+    accumulative_histogram[0] = histogram[0];
+    for i in 0..MAX_POWER {
+        accumulative_histogram[i + 1] = accumulative_histogram[i] + histogram[i];
+    }
+
+    // pomožna funkcija za vsoto glede na cone
+    let range_sum = |lo: usize, hi: usize| -> u32 {
+        let hi = hi.min(MAX_POWER);
+        accumulative_histogram[hi] - accumulative_histogram[lo]
+    };
+
+    //rezultat v formatu, ki vsebuje imena con
+  
+    let res = PowerZoneThresholds {
+        zone_1:  range_sum(0,             z.zone_2a as usize),
+        zone_2a: range_sum(z.zone_2a as usize, z.zone_2b as usize),
+        zone_2b: range_sum(z.zone_2b as usize, z.zone_3 as usize),
+        zone_3:  range_sum(z.zone_3 as usize,  z.zone_4 as usize),
+        zone_4:  range_sum(z.zone_4 as usize,  z.zone_5 as usize),
+        zone_5:  range_sum(z.zone_5 as usize,  z.zone_6 as usize),
+        zone_6:  range_sum(z.zone_6 as usize,  z.zone_7 as usize),
+        zone_7:  range_sum(z.zone_7 as usize,  MAX_POWER),
+    };
+
     res
 }
     
-pub fn heart_rate_zone_distribution(data: &[FitRecord], max_hr: MetricInt) -> MetricMap {
+pub fn heart_rate_zone_distribution(data: &[FitRecord], z: &HrZoneTresholds) -> HrZoneTresholds {
     //Čas (sekunde) v vsaki srčni coni (Z1-Z5)
-    let mut res: MetricMap = HashMap::new();
 
-    if max_hr == 0 {
-        return res;
+    const MAX_HR: usize = 301; 
+
+    // vektor za vsako moč : število sekund na tej moči
+    let mut histogram = vec![0u32; MAX_HR];
+    for record in data.iter() {
+        let hr = record.heart_rate.unwrap_or(0) as usize;
+        histogram[hr] += 1;
     }
 
-    for r in data {
-        if let Some(hr) = r.heart_rate {
-            let ratio = hr as f32 / max_hr as f32;
-            let zone = if ratio < 0.60 {
-                1
-            } else if ratio < 0.70 {
-                2
-            } else if ratio < 0.80 {
-                3
-            } else if ratio < 0.90 {
-                4
-            } else {
-                5
-            };
-
-            *res.entry(zone).or_insert(0) += 1;
-        }
+    //  
+    let mut accumulative_histogram = vec![0u32; MAX_HR + 1];
+    accumulative_histogram[0] = histogram[0];
+    for i in 0..MAX_HR {
+        accumulative_histogram[i + 1] = accumulative_histogram[i] + histogram[i];
     }
+
+    // pomožna funkcija za vsoto glede na cone
+    let range_sum = |lo: usize, hi: usize| -> u32 {
+        let hi = hi.min(MAX_HR);
+        accumulative_histogram[hi] - accumulative_histogram[lo]
+    };
+
+    //rezultat v formatu, ki vsebuje imena con
+  
+    let res = HrZoneTresholds {
+        zone_1:  range_sum(0,             z.zone_2a as usize),
+        zone_2a: range_sum(z.zone_2a as usize, z.zone_2b as usize),
+        zone_2b: range_sum(z.zone_2b as usize, z.zone_3 as usize),
+        zone_3:  range_sum(z.zone_3 as usize,  z.zone_4 as usize),
+        zone_4:  range_sum(z.zone_4 as usize,  z.zone_5 as usize),
+        zone_5:  range_sum(z.zone_5 as usize,  MAX_HR)
+    };
 
     res
 }
@@ -521,6 +578,85 @@ pub fn w_recovery(wbal: &[f64], window_s: usize) -> MetricFloat {
 }
   
     
+pub fn power_time_series(data: &[FitRecord]) -> Graph {
+    // Graf moči skozi čas (W vs čas v minutah).
+
+    Graph {
+        name: "Moč".to_string(),
+        x_axis: Axis { label: "Čas".to_string(), unit: Unit::Minutes },
+        y_axis: Axis { label: "Moč".to_string(), unit: Unit::Watts },
+        series: HashMap::new(),
+    }
+}
+
+pub fn hr_time_series(data: &[FitRecord]) -> Graph {
+    // Graf srčnega utripa skozi čas (bpm vs čas v minutah).
+
+    Graph {
+        name: "Srčni utrip".to_string(),
+        x_axis: Axis { label: "Čas".to_string(), unit: Unit::Minutes },
+        y_axis: Axis { label: "Srčni utrip".to_string(), unit: Unit::Bpm },
+        series: HashMap::new(),
+    }
+}
+
+pub fn altitude_time_series(data: &[FitRecord]) -> Graph {
+    // Graf nadmorske višine skozi čas (m vs čas v minutah).
+
+    Graph {
+        name: "Višina".to_string(),
+        x_axis: Axis { label: "Čas".to_string(), unit: Unit::Minutes },
+        y_axis: Axis { label: "Višina".to_string(), unit: Unit::Meters },
+        series: HashMap::new(),
+    }
+}
+
+pub fn speed_time_series(data: &[FitRecord]) -> Graph {
+    // Graf hitrosti skozi čas (km/h vs čas v minutah).
+
+    Graph {
+        name: "Hitrost".to_string(),
+        x_axis: Axis { label: "Čas".to_string(), unit: Unit::Minutes },
+        y_axis: Axis { label: "Hitrost".to_string(), unit: Unit::MetersPerSecond },
+        series: HashMap::new(),
+    }
+}
+
+pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
+    // Graf kadence skozi čas (obr/min vs čas v minutah).
+
+    Graph {
+        name: "Kadenca".to_string(),
+        x_axis: Axis { label: "Čas".to_string(), unit: Unit::Minutes },
+        y_axis: Axis { label: "Kadenca".to_string(), unit: Unit::Rpm },
+        series: HashMap::new(),
+    }
+}
+
+pub fn total_distance(data: &[FitRecord]) -> MetricFloat {
+    // Skupna razdalja treninga v kilometrih.
+
+    0.0
+}
+
+pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
+    // Skupno višinsko pridobivanje v metrih.
+
+    0.0
+}
+
+pub fn average_cadence(data: &[FitRecord]) -> MetricFloat {
+    // Povprečna kadenca v obr/min med aktivno vožnjo.
+
+    0.0
+}
+
+pub fn average_speed(data: &[FitRecord]) -> MetricFloat {
+    // Povprečna hitrost v km/h med aktivno vožnjo (brez postankov).
+
+    0.0
+}
+
 pub fn power_density_histogram(data: &[FitRecord]) {}
     
 pub fn hr_density_histogram(data: &[FitRecord]) {}

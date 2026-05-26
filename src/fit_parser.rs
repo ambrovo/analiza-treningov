@@ -96,7 +96,7 @@ pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::
                     "cadence" => if let Value::UInt8(v) = field.value() { rec.cadence = Some(*v); },
                     "fractional_cadence" => if let Value::Float64(v) = field.value() { rec.fractional_cadence = Some(*v); },
                     "distance" => if let Value::Float64(v) = field.value() { rec.distance = Some(*v); },
-                    "power" => if let Value::UInt16(v) = field.value() { rec.power = Some(*v); },
+                    "power" => if let Value::UInt16(v) = field.value() { rec.power = if *v < 3000 { Some(*v) } else { None }; },
                     "accumulated_power" => if let Value::UInt32(v) = field.value() { rec.accumulated_power = Some(*v); },
                     "enhanced_altitude" => if let Value::Float64(v) = field.value() { rec.enhanced_altitude = Some(*v); },
                     "enhanced_respiration_rate" => if let Value::Float64(v) = field.value() { rec.enhanced_respiration_rate = Some(*v); },
