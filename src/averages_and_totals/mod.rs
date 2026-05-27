@@ -1,5 +1,5 @@
 use crate::fit_parser::FitRecord;
-use serde::Serialize;
+use serde::{Serialize, de::value};
 use std::collections::HashMap;
 
 pub type MetricInt = u32;
@@ -618,8 +618,17 @@ pub fn w_recovery(wbal: &[f64], window_s: usize) -> MetricFloat {
     best / 1000.0 // kJ
 }
 
-pub fn power_time_series(_data: &[FitRecord]) -> Graph {
+pub fn power_time_series(data: &[FitRecord]) -> Graph {
     // Graf moči skozi čas (W vs čas v minutah).
+    let points: Vec<(f64, f64)> = data.iter()
+        .enumerate()
+        .filter_map(|(i, r)| {
+            r.power.map(|p| (i as f64 / 60.0, p as f64))
+        })
+        .collect();
+
+    let mut series = HashMap::new();
+    series.insert("Moč".to_string(), points);
 
     Graph {
         name: "Moč".to_string(),
@@ -631,12 +640,21 @@ pub fn power_time_series(_data: &[FitRecord]) -> Graph {
             label: "Moč".to_string(),
             unit: Unit::Watts,
         },
-        series: HashMap::new(),
+        series,
     }
 }
 
-pub fn hr_time_series(_data: &[FitRecord]) -> Graph {
+pub fn hr_time_series(data: &[FitRecord]) -> Graph {
     // Graf srčnega utripa skozi čas (bpm vs čas v minutah).
+    let points: Vec<(f64, f64)> = data.iter()
+        .enumerate()
+        .filter_map(|(i, r)| {
+            r.heart_rate.map(|p| (i as f64 / 60.0, p as f64))
+        })
+        .collect();
+
+    let mut series = HashMap::new();
+    series.insert("Srčni utrip".to_string(), points);
 
     Graph {
         name: "Srčni utrip".to_string(),
@@ -648,12 +666,21 @@ pub fn hr_time_series(_data: &[FitRecord]) -> Graph {
             label: "Srčni utrip".to_string(),
             unit: Unit::Bpm,
         },
-        series: HashMap::new(),
+        series,
     }
 }
 
-pub fn altitude_time_series(_data: &[FitRecord]) -> Graph {
+pub fn altitude_time_series(data: &[FitRecord]) -> Graph {
     // Graf nadmorske višine skozi čas (m vs čas v minutah).
+    let points: Vec<(f64, f64)> = data.iter()
+        .enumerate()
+        .filter_map(|(i, r)| {
+            r.enhanced_altitude.map(|p| (i as f64 / 60.0, p as f64))
+        })
+        .collect();
+
+    let mut series = HashMap::new();
+    series.insert("Višina".to_string(), points);
 
     Graph {
         name: "Višina".to_string(),
@@ -665,13 +692,22 @@ pub fn altitude_time_series(_data: &[FitRecord]) -> Graph {
             label: "Višina".to_string(),
             unit: Unit::Meters,
         },
-        series: HashMap::new(),
+        series,
     }
 }
 
-pub fn speed_time_series(_data: &[FitRecord]) -> Graph {
+pub fn speed_time_series(data: &[FitRecord]) -> Graph {
     // Graf hitrosti skozi čas (km/h vs čas v minutah).
+    let points: Vec<(f64, f64)> = data.iter()
+        .enumerate()
+        .filter_map(|(i, r)| {
+            r.enhanced_speed.map(|p| (i as f64 / 60.0, p as f64))
+        })
+        .collect();
 
+    let mut series = HashMap::new();
+    series.insert("Hitrost".to_string(), points);
+    
     Graph {
         name: "Hitrost".to_string(),
         x_axis: Axis {
@@ -682,13 +718,22 @@ pub fn speed_time_series(_data: &[FitRecord]) -> Graph {
             label: "Hitrost".to_string(),
             unit: Unit::MetersPerSecond,
         },
-        series: HashMap::new(),
+        series,
     }
 }
 
-pub fn cadence_time_series(_data: &[FitRecord]) -> Graph {
+pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
     // Graf kadence skozi čas (obr/min vs čas v minutah).
+    let points: Vec<(f64, f64)> = data.iter()
+        .enumerate()
+        .filter_map(|(i, r)| {
+            r.cadence.map(|p| (i as f64 / 60.0, p as f64))
+        })
+        .collect();
 
+    let mut series = HashMap::new();
+    series.insert("Kadenca".to_string(), points);
+    
     Graph {
         name: "Kadenca".to_string(),
         x_axis: Axis {
@@ -699,35 +744,59 @@ pub fn cadence_time_series(_data: &[FitRecord]) -> Graph {
             label: "Kadenca".to_string(),
             unit: Unit::Rpm,
         },
-        series: HashMap::new(),
+        series,
     }
 }
 
-pub fn total_distance(_data: &[FitRecord]) -> MetricFloat {
+pub fn total_distance(data: &[FitRecord]) -> MetricFloat {
     // Skupna razdalja treninga v kilometrih.
 
-    0.0
+    data.iter()
+        .filter_map(|r| r.distance)
+        .last()
+        .unwrap_or(0.0) / 1000.0
 }
 
-pub fn total_elevation_gain(_data: &[FitRecord]) -> MetricFloat {
+pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
     // Skupno višinsko pridobivanje v metrih.
 
-    0.0
+    data.iter()
+        .filter_map(|r| r.enhanced_altitude)
+        .collect::<Vec<_>>()
+        .windows(2)
+        .filter_map(|w| {
+            let diff = w[1] - w[0];
+            if diff > 0.0 {Some(diff)} else {None}
+        })
+        .sum()
 }
 
-pub fn average_cadence(_data: &[FitRecord]) -> MetricFloat {
+pub fn average_cadence(data: &[FitRecord]) -> MetricFloat {
     // Povprečna kadenca v obr/min med aktivno vožnjo.
 
-    0.0
+    let values: Vec<f64> = data.iter()
+        .filter_map(|r| r.cadence)
+        .filter(|&c| c > 0)
+        .map(|c| c as f64)
+        .collect();
+
+    if values.is_empty() {0.0} else {values.iter().sum::<f64>() / values.len() as f64}
 }
 
-pub fn average_speed(_data: &[FitRecord]) -> MetricFloat {
+pub fn average_speed(data: &[FitRecord]) -> MetricFloat {
     // Povprečna hitrost v km/h med aktivno vožnjo (brez postankov).
 
-    0.0
+    let values: Vec<f64> = data.iter()
+        .filter_map(|r| r.enhanced_speed)
+        .filter(|&c| c > 0.0)
+        .collect();
+
+    if values.is_empty() {0.0} else {values.iter().sum::<f64>() / values.len() as f64 * 3.6}
 }
 
-pub fn power_density_histogram(_data: &[FitRecord]) {}
+pub fn power_density_histogram(_data: &[FitRecord]) {
+    //Distribucija moči v 10W korakih
+}
 
 pub fn hr_density_histogram(_data: &[FitRecord]) {}
 
