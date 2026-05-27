@@ -1,4 +1,4 @@
-use analiza_treningov::{analyze_all, analyze_one};
+use analiza_treningov::{analyze_all, analyze_one, combine_and_analyze_all};
 use analiza_treningov::print_result::{print_result, print_single_result};
 use analiza_treningov::averages_and_totals::{PowerZoneThresholds, HrZoneTresholds};
 use std::time::Instant;
@@ -32,7 +32,7 @@ fn main() {
 
     let t_total = Instant::now();
 
-    let total = analyze_all(FOLDER, ftp, &hr_zones, w_prime_j, cp, &power_zones);
+    let total = combine_and_analyze_all(FOLDER, ftp, &hr_zones, w_prime_j, cp, &power_zones);
     println!("Analizirano {} treningov v {:?}", total.total_workouts, t_total.elapsed());
     println!("Skupno trajanje: {:.1} h", total.total_duration_hours);
     println!("Skupno delo:     {} kJ", total.total_work_kj);
