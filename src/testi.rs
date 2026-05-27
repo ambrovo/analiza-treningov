@@ -1,8 +1,8 @@
-
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::averages_and_totals::*;
+    use crate::fit_parser::FitRecord;
+    
 
     fn create_mock_record(power: u16, accumulated: u32) -> FitRecord {
         FitRecord {
