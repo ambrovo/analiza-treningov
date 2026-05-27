@@ -5,7 +5,7 @@ pub mod print_result;
 mod testi;
 
 // Re-export the public API used by Tauri and other consumers
-pub use self::main_logic::{SingleAnalysisResult, TotalAnalysisResult, TotalResult, analyze_one, analyze_all};
+pub use self::main_logic::{SingleAnalysisResult, TotalAnalysisResult, TotalResult, analyze_one, analyze_all, combine_and_analyze_all};
 
 mod main_logic {
     use std::fs;
@@ -211,8 +211,8 @@ mod main_logic {
     }
     
 
-    pub fn analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds) -> TotalResult {
-        use crate::aggregate::*;
+    pub fn analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds) -> Vec<TotalAnalysisResult> {
+        
 
         let files: Vec<_> = fs::read_dir(folder)
             .expect("Cannot read folder")
@@ -231,7 +231,14 @@ mod main_logic {
             })
             .collect();
 
-        // Razvrsti po datumu za zaporedne izračune (CTL/ATL/TSB)
+        // Razvrsti po datumu 
+        results.sort_by(|a, b| a.workout_date.cmp(&b.workout_date));
+
+        return results;
+    }
+    pub fn combine_and_analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds) -> TotalResult {
+        use crate::aggregate::*;
+        let mut results = analyze_all(folder, ftp, hr_zones, w_prime_j, cp, power_zones,);
         results.sort_by(|a, b| a.workout_date.cmp(&b.workout_date));
 
         TotalResult {
