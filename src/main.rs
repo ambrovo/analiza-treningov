@@ -1,4 +1,4 @@
-use analiza_treningov::{analyze_all, analyze_one, combine_and_analyze_all};
+use analiza_treningov::{ analyze_one, combine_and_analyze_all};
 use analiza_treningov::print_result::{print_result, print_single_result};
 use analiza_treningov::averages_and_totals::{PowerZoneThresholds, HrZoneTresholds};
 use std::time::Instant;

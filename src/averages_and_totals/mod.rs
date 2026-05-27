@@ -76,8 +76,8 @@ pub fn power_duration_curve(data: &[FitRecord], start_index: usize) -> MetricMap
         let start = start_index + (d as usize);
         for i   in start..(data.len())  {
             if let (Some(curr), Some(prev)) = (
-                data[i as usize].accumulated_power, 
-                data[(i - (d as usize)) as usize].accumulated_power
+                data[i].accumulated_power, 
+                data[i - (d as usize)].accumulated_power
             ) {
                 let diff = curr.saturating_sub(prev);
                 if diff > m {
@@ -89,7 +89,7 @@ pub fn power_duration_curve(data: &[FitRecord], start_index: usize) -> MetricMap
             res.insert(d, m/d);
         }
     }
-    return res;
+    res
     
     
 }
@@ -120,7 +120,7 @@ pub fn fatigued_pdc(data: &[FitRecord]) -> NestedMetricMap {
             data.iter()
                 .position(|d| {
                     d.accumulated_power
-                        .map_or(false, |ac| ac > ac_power * 1000)
+                        .is_some_and(|ac| ac > ac_power * 1000)
                 })
                 .map(|idx| (ac_power, power_duration_curve(data, idx)))
         })
@@ -169,8 +169,7 @@ pub fn training_stress_score(ftp: MetricFloat, np : MetricFloat, duration: Metri
     if ftp == 0.0 {
         return 0.0;
     }
-    let tss = (duration as f64 * np * np) / (ftp * ftp * 3600.0) * 100.0;
-    tss
+    (duration as f64 * np * np) / (ftp * ftp * 3600.0) * 100.0
 }
 
 pub fn variability_index(data: &[FitRecord], np : MetricFloat) -> MetricFloat {
@@ -197,9 +196,9 @@ pub fn variability_index(data: &[FitRecord], np : MetricFloat) -> MetricFloat {
         return 0.0;
     }
 
-    let vi = np / avg_power;
+    np / avg_power
 
-    vi
+  
 }
     
 pub fn power_zone_distribution(data: &[FitRecord], z: &PowerZoneThresholds) -> PowerZoneThresholds {
@@ -228,7 +227,7 @@ pub fn power_zone_distribution(data: &[FitRecord], z: &PowerZoneThresholds) -> P
 
     //rezultat v formatu, ki vsebuje imena con
   
-    let res = PowerZoneThresholds {
+    PowerZoneThresholds {
         zone_1:  range_sum(0,             z.zone_2a as usize),
         zone_2a: range_sum(z.zone_2a as usize, z.zone_2b as usize),
         zone_2b: range_sum(z.zone_2b as usize, z.zone_3 as usize),
@@ -237,9 +236,7 @@ pub fn power_zone_distribution(data: &[FitRecord], z: &PowerZoneThresholds) -> P
         zone_5:  range_sum(z.zone_5 as usize,  z.zone_6 as usize),
         zone_6:  range_sum(z.zone_6 as usize,  z.zone_7 as usize),
         zone_7:  range_sum(z.zone_7 as usize,  MAX_POWER),
-    };
-
-    res
+    }
 }
     
 pub fn heart_rate_zone_distribution(data: &[FitRecord], z: &HrZoneTresholds) -> HrZoneTresholds {
@@ -269,16 +266,16 @@ pub fn heart_rate_zone_distribution(data: &[FitRecord], z: &HrZoneTresholds) -> 
 
     //rezultat v formatu, ki vsebuje imena con
   
-    let res = HrZoneTresholds {
+   HrZoneTresholds {
         zone_1:  range_sum(0,             z.zone_2a as usize),
         zone_2a: range_sum(z.zone_2a as usize, z.zone_2b as usize),
         zone_2b: range_sum(z.zone_2b as usize, z.zone_3 as usize),
         zone_3:  range_sum(z.zone_3 as usize,  z.zone_4 as usize),
         zone_4:  range_sum(z.zone_4 as usize,  z.zone_5 as usize),
         zone_5:  range_sum(z.zone_5 as usize,  MAX_HR)
-    };
+    }
 
-    res
+    
 }
     
 pub fn severe_domain_seconds(data: &[FitRecord], ftp: MetricInt) -> MetricInt {
@@ -340,7 +337,7 @@ pub fn total_work(data: &[FitRecord]) -> MetricInt {
     .map(|p| p as u32)
     .sum();
 
-    (total_joules / 1000) as u32
+    total_joules / 1000
 }
     
 pub fn peak_vam(data: &[FitRecord]) -> MetricMap {
@@ -434,16 +431,16 @@ pub fn fatigue_resistance_index(data: &[FitRecord]) -> MetricInt {
     
 pub fn average_power_of(data: &[FitRecord]) -> MetricFloat {
     let mut total: u32 = 0; 
-    for i in 0..data.len() {
-        total += data[i].power.unwrap_or(0) as u32
+    for i in data {
+        total += i.power.unwrap_or(0) as u32
     }; 
     total as f64/data.len()   as f64
 }
 
 pub fn average_hr_of(data: &[FitRecord]) -> MetricFloat {
     let mut total: f64 = 0.0; 
-    for i in 0..data.len() {
-        total += data[i].heart_rate.unwrap_or(0) as f64
+    for i in data {
+        total += i.heart_rate.unwrap_or(0) as f64
     }; 
     (total)/(data.len() as f64)  
 }
@@ -469,10 +466,10 @@ pub fn hr_drift_rate(data: &[FitRecord]) -> MetricFloat{
 
     let start = 0;
 
-    for i in 0..data.len() {
-        let r = &data[i];
+    for (i, r) in data.iter().enumerate() {
+        
         if let Some(hr) = r.heart_rate {
-            let x = (i as i32 - start)as f64  / 60 as f64;
+            let x = (i as i32 - start)as f64  / 60_f64 ;
             let y = hr as f64;
             n += 1.0;
             sum_x += x;
@@ -485,9 +482,9 @@ pub fn hr_drift_rate(data: &[FitRecord]) -> MetricFloat{
     if n < 2.0 { return 0.0; }
 
     // slope = (n * Σxy - Σx * Σy) / (n * Σx² - (Σx)²)
-    let slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+    (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x)
 
-    slope
+
 }
     
 pub fn power_hr_slope(data: &[FitRecord]) -> MetricFloat{
@@ -512,9 +509,9 @@ pub fn power_hr_slope(data: &[FitRecord]) -> MetricFloat{
     if n < 2.0 { return 0.0; }
 
    
-    let slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+    (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x)
 
-    slope
+
 }
     
    
@@ -618,7 +615,7 @@ pub fn w_recovery(wbal: &[f64], window_s: usize) -> MetricFloat {
 }
   
     
-pub fn power_time_series(data: &[FitRecord]) -> Graph {
+pub fn power_time_series(_data: &[FitRecord]) -> Graph {
     // Graf moči skozi čas (W vs čas v minutah).
 
     Graph {
@@ -629,7 +626,7 @@ pub fn power_time_series(data: &[FitRecord]) -> Graph {
     }
 }
 
-pub fn hr_time_series(data: &[FitRecord]) -> Graph {
+pub fn hr_time_series(_data: &[FitRecord]) -> Graph {
     // Graf srčnega utripa skozi čas (bpm vs čas v minutah).
 
     Graph {
@@ -640,7 +637,7 @@ pub fn hr_time_series(data: &[FitRecord]) -> Graph {
     }
 }
 
-pub fn altitude_time_series(data: &[FitRecord]) -> Graph {
+pub fn altitude_time_series(_data: &[FitRecord]) -> Graph {
     // Graf nadmorske višine skozi čas (m vs čas v minutah).
 
     Graph {
@@ -651,7 +648,7 @@ pub fn altitude_time_series(data: &[FitRecord]) -> Graph {
     }
 }
 
-pub fn speed_time_series(data: &[FitRecord]) -> Graph {
+pub fn speed_time_series(_data: &[FitRecord]) -> Graph {
     // Graf hitrosti skozi čas (km/h vs čas v minutah).
 
     Graph {
@@ -662,7 +659,7 @@ pub fn speed_time_series(data: &[FitRecord]) -> Graph {
     }
 }
 
-pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
+pub fn cadence_time_series(_data: &[FitRecord]) -> Graph {
     // Graf kadence skozi čas (obr/min vs čas v minutah).
 
     Graph {
@@ -673,48 +670,48 @@ pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
     }
 }
 
-pub fn total_distance(data: &[FitRecord]) -> MetricFloat {
+pub fn total_distance(_data: &[FitRecord]) -> MetricFloat {
     // Skupna razdalja treninga v kilometrih.
 
     0.0
 }
 
-pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
+pub fn total_elevation_gain(_data: &[FitRecord]) -> MetricFloat {
     // Skupno višinsko pridobivanje v metrih.
 
     0.0
 }
 
-pub fn average_cadence(data: &[FitRecord]) -> MetricFloat {
+pub fn average_cadence(_data: &[FitRecord]) -> MetricFloat {
     // Povprečna kadenca v obr/min med aktivno vožnjo.
 
     0.0
 }
 
-pub fn average_speed(data: &[FitRecord]) -> MetricFloat {
+pub fn average_speed(_data: &[FitRecord]) -> MetricFloat {
     // Povprečna hitrost v km/h med aktivno vožnjo (brez postankov).
 
     0.0
 }
 
-pub fn power_density_histogram(data: &[FitRecord]) {}
+pub fn power_density_histogram(_data: &[FitRecord]) {}
     
-pub fn hr_density_histogram(data: &[FitRecord]) {}
+pub fn hr_density_histogram(_data: &[FitRecord]) {}
     
-pub fn compound_score(data: &[FitRecord]) {}
+pub fn compound_score(_data: &[FitRecord]) {}
     
-pub fn durability_ratio(data: &[FitRecord]) {}
+pub fn durability_ratio(_data: &[FitRecord]) {}
     
-pub fn power_coverage(data: &[FitRecord]) {}
+pub fn power_coverage(_data: &[FitRecord]) {}
     
-pub fn hr_coverage(data: &[FitRecord]) {}
+pub fn hr_coverage(_data: &[FitRecord]) {}
     
-pub fn power_spike_count(data: &[FitRecord]) {}
+pub fn power_spike_count(_data: &[FitRecord]) {}
     
-pub fn hr_dropout_seconds(data: &[FitRecord]) {}
+pub fn hr_dropout_seconds(_data: &[FitRecord]) {}
     
-pub fn data_quality_score(data: &[FitRecord]) {}
+pub fn data_quality_score(_data: &[FitRecord]) {}
     
-pub fn load_ayes(data: &[FitRecord]) {}
+pub fn load_ayes(_data: &[FitRecord]) {}
     
-pub fn workout_archetype(data: &[FitRecord]) {}
+pub fn workout_archetype(_data: &[FitRecord]) {}

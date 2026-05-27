@@ -1,5 +1,4 @@
-use crate::averages_and_totals::*;
-use crate::fit_parser::FitRecord;
+
 
 #[cfg(test)]
 mod tests {

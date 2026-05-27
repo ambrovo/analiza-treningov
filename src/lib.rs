@@ -241,7 +241,7 @@ mod main_logic {
         // Razvrsti po datumu 
         results.sort_by(|a, b| a.workout_date.cmp(&b.workout_date));
 
-        return results;
+        results
     }
     pub fn combine_and_analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds, with_cache: bool) -> TotalResult {
         use crate::aggregate::*;
