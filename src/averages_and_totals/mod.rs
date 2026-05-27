@@ -384,13 +384,53 @@ pub fn peak_vam(data: &[FitRecord]) -> MetricMap {
     
     
     
-pub fn fatigue_resistance_drops(data: &[FitRecord])  {
- 
+pub fn fatigue_resistance_drops(data: &[FitRecord]) -> NestedMetricMap {
+    //Procentualni padec moči po utrujanju na ključnih trajanih
+    // $Drop(d) = \frac{P_fresh(d) - P_fatigued(d)}{P_fresh(d)} * 100$
+    let fresh = power_duration_curve(data, 0);
+    let fatigued = fatigued_pdc(data);
+    
+    fatigued
+        .into_iter()
+        .map(|(fatigue_level, pdc)| {
+            let drops: MetricMap = pdc
+                .into_iter()
+                .filter_map(|(duration, fatigued_power)| {
+                    fresh.get(&duration).map(|&fresh_power| {
+                        let drop = ((fresh_power as f32 - fatigued_power as f32) / fresh_power as f32) * 100.0;
+
+                        (duration, drop.round() as u32)
+                    })
+                }).collect();
+
+            (fatigue_level, drops)
+        }).collect()
 }
     
-pub fn fatigue_resistance_index(data: &[FitRecord])   {
-    
+pub fn fatigue_resistance_index(data: &[FitRecord]) -> MetricInt {
+    //Razmerje 5min moči po 2000 kJ vs. sveža 5min moč
+    // $FRI = \frac{P_{5min, fatigued}}{P_{5min, fresh}}$
+    let fresh = power_duration_curve(data, 0);
+    let fatigued = fatigued_pdc(data);
+
+    let fresh_5min = match fresh.get(&300) {
+        Some(v) => *v,
+        None => return 0,
+    };
+
+    let fatigued_2000 = match fatigued.get(&2000) {
+        Some(v) => v,
+        None => return 0,
+    };
+
+    let fatigued_5min = match fatigued_2000.get(&300) {
+        Some(v) => *v,
+        None => return 0,
+    };
+
+    ((fatigued_5min as f32 / fresh_5min as f32) * 1000.0).round() as u32
 }
+
     
 pub fn average_power_of(data: &[FitRecord]) -> MetricFloat {
     let mut total: u32 = 0; 
