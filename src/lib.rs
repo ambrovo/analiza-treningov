@@ -58,6 +58,13 @@ mod main_logic {
         pub speed_graph: Graph,
         pub cadence_graph: Graph,
         pub w_balance_graph: Graph,
+        pub hr_histogram: Vec<MetricInt>,
+        pub power_histogram: Vec<MetricInt>,
+        pub hr_seconds: MetricInt,
+        pub power_seconds: MetricInt,
+        pub durability_ratio: MetricFloat,
+        pub power_coverage: MetricFloat,
+        pub hr_coverage: MetricFloat,
     }
 
     #[derive(Serialize)]
@@ -102,7 +109,10 @@ mod main_logic {
         let np = normalized_power(data);
         let vi = variability_index(data, np as f64);
         let wbal_arr = compute_wbal_array(data, params.cp, params.w_prime_j);
-
+        let power_histogram = power_density_histogram(data);
+        let hr_histogram = hr_density_histogram(data);
+        let power_seconds = total_power_seconds(data);
+        let hr_seconds = total_hr_seconds(data);
         AnalysisResult {
             filename: path.to_string(),
             workout_date: Some(workout_date.to_string()),
@@ -127,8 +137,8 @@ mod main_logic {
             power_hr_slope: power_hr_slope(data),
             severe_seconds: severe_domain_seconds(data, params.ftp),
             extreme_seconds: extreme_domain_seconds(data, params.ftp),
-            power_zones: power_zone_distribution(data, &params.power_zones),
-            hr_zones: heart_rate_zone_distribution(data, &params.hr_zones),
+            power_zones: power_zone_distribution(&params.power_zones, &power_histogram),
+            hr_zones: heart_rate_zone_distribution(&params.hr_zones, &hr_histogram),
             pdc: power_duration_curve(data, 0),
             fatigued_pdc: fatigued_pdc(data),
             peak_vam: peak_vam(data),
@@ -144,6 +154,13 @@ mod main_logic {
             speed_graph: speed_time_series(data),
             cadence_graph: cadence_time_series(data),
             w_balance_graph: w_balance_graph(&wbal_arr, params.w_prime_j),
+            hr_histogram,
+            power_histogram,
+            hr_seconds,
+            power_seconds,
+            durability_ratio: durability_ratio(data),
+            power_coverage: power_coverage(data, power_seconds),
+            hr_coverage: hr_coverage(data, hr_seconds),
         }
     }
 

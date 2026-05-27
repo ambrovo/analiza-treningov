@@ -58,7 +58,8 @@ pub struct HrZoneTresholds {
     pub zone_4: u32,
     pub zone_5: u32,
 }
-
+pub const MAX_POWER: usize = 3000;
+pub const MAX_HR: usize = 301;
 pub fn power_duration_curve(data: &[FitRecord], start_index: usize) -> MetricMap {
     // maksimalna moč glede na standardna časovna okna
     let durations: [MetricInt; 12] = [1, 3, 5, 30, 60, 120, 300, 600, 1200, 1800, 3600, 7200];
@@ -190,16 +191,10 @@ pub fn variability_index(data: &[FitRecord], np: MetricFloat) -> MetricFloat {
     np / avg_power
 }
 
-pub fn power_zone_distribution(data: &[FitRecord], z: &PowerZoneThresholds) -> PowerZoneThresholds {
-    const MAX_POWER: usize = 3001;
-
-    // vektor za vsako moč : število sekund na tej moči
-    let mut histogram = vec![0u32; MAX_POWER];
-    for record in data.iter() {
-        let power = record.power.unwrap_or(0) as usize;
-        histogram[power] += 1;
-    }
-
+pub fn power_zone_distribution(
+    z: &PowerZoneThresholds,
+    histogram: &[MetricInt],
+) -> PowerZoneThresholds {
     //
     let mut accumulative_histogram = vec![0u32; MAX_POWER + 1];
     accumulative_histogram[0] = histogram[0];
@@ -227,17 +222,13 @@ pub fn power_zone_distribution(data: &[FitRecord], z: &PowerZoneThresholds) -> P
     }
 }
 
-pub fn heart_rate_zone_distribution(data: &[FitRecord], z: &HrZoneTresholds) -> HrZoneTresholds {
+pub fn heart_rate_zone_distribution(
+    z: &HrZoneTresholds,
+    histogram: &[MetricInt],
+) -> HrZoneTresholds {
     //Čas (sekunde) v vsaki srčni coni (Z1-Z5)
 
     const MAX_HR: usize = 301;
-
-    // vektor za vsako moč : število sekund na tej moči
-    let mut histogram = vec![0u32; MAX_HR];
-    for record in data.iter() {
-        let hr = record.heart_rate.unwrap_or(0) as usize;
-        histogram[hr] += 1;
-    }
 
     //
     let mut accumulative_histogram = vec![0u32; MAX_HR + 1];
@@ -308,6 +299,18 @@ pub fn total_power_seconds(data: &[FitRecord]) -> MetricInt {
 
     for r in data {
         if r.power.is_some() {
+            seconds += 1
+        }
+    }
+
+    seconds
+}
+pub fn total_hr_seconds(data: &[FitRecord]) -> MetricInt {
+    //Skupno število sekund z veljavnimi podatki o moči
+    let mut seconds: u32 = 0;
+
+    for r in data {
+        if r.heart_rate.is_some() {
             seconds += 1
         }
     }
@@ -631,13 +634,13 @@ pub fn power_time_series(data: &[FitRecord]) -> Graph {
     series.insert("Moč".to_string(), points);
 
     Graph {
-        name: "Moč".to_string(),
+        name: "Power".to_string(),
         x_axis: Axis {
-            label: "Čas".to_string(),
+            label: "Time".to_string(),
             unit: Unit::Minutes,
         },
         y_axis: Axis {
-            label: "Moč".to_string(),
+            label: "Power".to_string(),
             unit: Unit::Watts,
         },
         series,
@@ -794,26 +797,56 @@ pub fn average_speed(data: &[FitRecord]) -> MetricFloat {
     if values.is_empty() {0.0} else {values.iter().sum::<f64>() / values.len() as f64 * 3.6}
 }
 
-pub fn power_density_histogram(_data: &[FitRecord]) {
-    //Distribucija moči v 10W korakih
+pub fn power_density_histogram(data: &[FitRecord]) -> Vec<MetricInt> {
+    let mut histogram = vec![0u32; MAX_POWER];
+    for i in data.iter() {
+        let power = i.power.unwrap_or(0) as usize;
+        histogram[power] += 1;
+    }
+    histogram
+}
+pub fn hr_density_histogram(data: &[FitRecord]) -> Vec<MetricInt> {
+    let mut histogram = vec![0u32; MAX_HR];
+    for i in data.iter() {
+        let hr = i.heart_rate.unwrap_or(0) as usize;
+        histogram[hr] += 1;
+    }
+    histogram
 }
 
-pub fn hr_density_histogram(_data: &[FitRecord]) {}
+pub fn durability_ratio(data: &[FitRecord]) -> MetricFloat {
+    if data.len() < 2 {
+        return 0.0;
+    }
 
-pub fn compound_score(_data: &[FitRecord]) {}
+    let mid = data.len() / 2;
+    let first_half = &data[..mid];
+    let second_half = &data[mid..];
 
-pub fn durability_ratio(_data: &[FitRecord]) {}
+    let avg_first = average_power_of(first_half);
+    let avg_second = average_power_of(second_half);
 
-pub fn power_coverage(_data: &[FitRecord]) {}
+    if avg_first == 0.0 {
+        return 0.0;
+    }
 
-pub fn hr_coverage(_data: &[FitRecord]) {}
+    avg_second / avg_first
+}
 
-pub fn power_spike_count(_data: &[FitRecord]) {}
+pub fn power_coverage(data: &[FitRecord], power_seconds: MetricInt) -> MetricFloat {
+    data.len() as MetricFloat / (power_seconds as MetricFloat)
+}
 
-pub fn hr_dropout_seconds(_data: &[FitRecord]) {}
+pub fn hr_coverage(data: &[FitRecord], hr_seconds: MetricInt) -> MetricFloat {
+    data.len() as MetricFloat / (hr_seconds as MetricFloat)
+}
 
-pub fn data_quality_score(_data: &[FitRecord]) {}
-
-pub fn load_ayes(_data: &[FitRecord]) {}
-
-pub fn workout_archetype(_data: &[FitRecord]) {}
+pub fn hr_dropout_seconds(data: &[FitRecord]) -> MetricInt {
+    let mut s = 0;
+    for i in data.iter() {
+        if i.heart_rate.is_none_or(|hr| hr == 0) {
+            s += 1;
+        }
+    }
+    s
+}
