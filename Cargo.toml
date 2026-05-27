@@ -19,3 +19,4 @@ csv = "*"
 serde = { version = "*", features = ["derive"] }
 chrono = "*"
 rayon = "*"
+bincode = "1.3"

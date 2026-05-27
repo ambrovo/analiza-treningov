@@ -105,9 +105,12 @@ mod main_logic {
     }
 
 
-    pub fn analyze_one(path: &str, ftp: u32, hr_zone_tresholds: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zone_thresholds: &PowerZoneThresholds) -> Result<SingleAnalysisResult, Box<dyn std::error::Error>> {
-        let data: Vec<FitRecord> = crate::fit_parser::parse_fit_file(path)?;
-
+    pub fn analyze_one(path: &str, ftp: u32, hr_zone_tresholds: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zone_thresholds: &PowerZoneThresholds, with_cache: bool) -> Result<SingleAnalysisResult, Box<dyn std::error::Error>> {
+        let data: Vec<FitRecord> = if with_cache {
+            crate::fit_parser::parse_fit_file_cached(path)?
+        } else {
+            crate::fit_parser::parse_fit_file(path)?
+        };
         let workout_date = data.iter()
             .find_map(|r| r.timestamp.as_ref())
             .map(|dt| dt.format("%Y-%m-%d").to_string());
@@ -161,9 +164,13 @@ mod main_logic {
     }
 
 
-    pub fn analyze_one_for_total(path: &str, ftp: u32, hr_zone_tresholds: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zone_thresholds: &PowerZoneThresholds) -> Result<TotalAnalysisResult, Box<dyn std::error::Error>> {
-        let data: Vec<FitRecord> = crate::fit_parser::parse_fit_file(path)?;
-
+    pub fn analyze_one_for_total(path: &str, ftp: u32, hr_zone_tresholds: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zone_thresholds: &PowerZoneThresholds, with_cache: bool) -> Result<TotalAnalysisResult, Box<dyn std::error::Error>> {
+      
+        let data: Vec<FitRecord> = if with_cache {
+            crate::fit_parser::parse_fit_file_cached(path)?
+        } else {
+            crate::fit_parser::parse_fit_file(path)?
+        };
         let workout_date = data.iter()
             .find_map(|r| r.timestamp.as_ref())
             .map(|dt| dt.format("%Y-%m-%d").to_string());
@@ -211,7 +218,7 @@ mod main_logic {
     }
     
 
-    pub fn analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds) -> Vec<TotalAnalysisResult> {
+    pub fn analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds, with_cache: bool) -> Vec<TotalAnalysisResult> {
         
 
         let files: Vec<_> = fs::read_dir(folder)
@@ -227,7 +234,7 @@ mod main_logic {
         let mut results: Vec<TotalAnalysisResult> = files.par_iter()
             .filter_map(|entry| {
                 let path = entry.path();
-                analyze_one_for_total(&path.to_string_lossy(), ftp, hr_zones, w_prime_j, cp, power_zones).ok()
+                analyze_one_for_total(&path.to_string_lossy(), ftp, hr_zones, w_prime_j, cp, power_zones, with_cache).ok()
             })
             .collect();
 
@@ -236,9 +243,9 @@ mod main_logic {
 
         return results;
     }
-    pub fn combine_and_analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds) -> TotalResult {
+    pub fn combine_and_analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds, with_cache: bool) -> TotalResult {
         use crate::aggregate::*;
-        let mut results = analyze_all(folder, ftp, hr_zones, w_prime_j, cp, power_zones,);
+        let mut results = analyze_all(folder, ftp, hr_zones, w_prime_j, cp, power_zones, with_cache);
         results.sort_by(|a, b| a.workout_date.cmp(&b.workout_date));
 
         TotalResult {

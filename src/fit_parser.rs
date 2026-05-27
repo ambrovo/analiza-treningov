@@ -1,12 +1,14 @@
 use fitparser::{from_reader, Value};
 use fitparser::profile::MesgNum;
 use flate2::read::GzDecoder;
-use std::fs::File;
+use serde::{Deserialize, Serialize};
+use std::fs::{self, File};
 use std::io::BufReader;
 use chrono::{DateTime, Local};
+use std::path::{Path, PathBuf};
 
 /// Strongly typed FIT record with optional values
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum MetricType {
     HeartRate,
     Cadence,
@@ -17,6 +19,7 @@ pub enum MetricType {
     Temperature,
     Distance,
 }
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FitRecord {
     pub timestamp: Option<DateTime<Local>>,
     pub heart_rate: Option<u8>,
@@ -38,7 +41,41 @@ pub struct FitRecord {
     pub unknown_field_144: Option<u8>,
 }
 
-/// Parse FIT (or FIT.gz) file into Vec<FitRecord>
+//pot za cache glede na ime datoteke
+fn cache_path_for(fit_path: &str) -> PathBuf {
+    let p = Path::new(fit_path);
+    let parent = p.parent().unwrap_or(Path::new("."));
+    let cache_dir = parent.join(".fit_cache");
+    let file_name = p.file_name().unwrap().to_string_lossy();
+    cache_dir.join(format!("{}.bincode", file_name))
+}
+
+pub fn parse_fit_file_cached(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::Error>> {
+    let cached_path = cache_path_for(path);
+
+    // probaj cache
+    if cached_path.exists() {
+        let bytes = fs::read(&cached_path)?;
+        if let Ok(records) = bincode::deserialize::<Vec<FitRecord>>(&bytes) {
+            return Ok(records);
+        }
+       
+    }
+
+    // če ni cache
+    let records = parse_fit_file(path)?;
+
+    
+    if let Some(dir) = cached_path.parent() {
+        let _ = fs::create_dir_all(dir);
+    }
+    if let Ok(bytes) = bincode::serialize(&records) {
+        let _ = fs::write(&cached_path, bytes);
+    }
+
+    Ok(records)
+}
+/// Parsiranje fit datoteke
 pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::Error>> {
     let file = File::open(path)?;
     let reader: Box<dyn std::io::Read> = if path.ends_with(".gz") {
@@ -53,7 +90,7 @@ pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::
 
     for record in from_reader(&mut reader)? {
 
-        // Capture session start_time as fallback for workout date
+        // dobiti datum za zacetek
         if record.kind() == MesgNum::Session || record.kind() == MesgNum::Activity {
             for field in record.fields() {
                 if field.name() == "start_time" || field.name() == "timestamp" {

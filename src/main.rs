@@ -3,8 +3,8 @@ use analiza_treningov::print_result::{print_result, print_single_result};
 use analiza_treningov::averages_and_totals::{PowerZoneThresholds, HrZoneTresholds};
 use std::time::Instant;
 
-const FOLDER: &str = "/Users/ambrozvovk/Desktop/ambroz treningi";
-const SINGLE: &str = "/Users/ambrozvovk/Desktop/ambroz treningi/tp-4447306.2026-05-20-17-05-03-743Z.GarminPing.AAAAAGoN6b8FUxX7.FIT.gz";
+const FOLDER: &str = "test";
+const SINGLE: &str = "test/tp-4447306.2026-05-20-17-05-03-743Z.GarminPing.AAAAAGoN6b8FUxX7.FIT.gz";
 fn main() {
     let ftp: u32 = 250;
     let cp: u32 = 240;
@@ -32,13 +32,13 @@ fn main() {
 
     let t_total = Instant::now();
 
-    let total = combine_and_analyze_all(FOLDER, ftp, &hr_zones, w_prime_j, cp, &power_zones);
+    let total = combine_and_analyze_all(FOLDER, ftp, &hr_zones, w_prime_j, cp, &power_zones, true);
     println!("Analizirano {} treningov v {:?}", total.total_workouts, t_total.elapsed());
     println!("Skupno trajanje: {:.1} h", total.total_duration_hours);
     println!("Skupno delo:     {} kJ", total.total_work_kj);
     print_result(&total);
      let t_single = Instant::now();
-    match analyze_one(SINGLE, ftp, &hr_zones, w_prime_j, cp, &power_zones) {
+    match analyze_one(SINGLE, ftp, &hr_zones, w_prime_j, cp, &power_zones, true) {
       Ok(single) => print_single_result(&single),
       Err(e) => println!("Napaka: {}", e),
   }
