@@ -2,7 +2,6 @@
 mod tests {
     use crate::averages_and_totals::*;
     use crate::fit_parser::FitRecord;
-    
 
     fn create_mock_record(power: u16, accumulated: u32) -> FitRecord {
         FitRecord {
@@ -118,7 +117,7 @@ mod tests {
             .map(|i| create_record_with_hr(200, 150, 200 * (i + 1)))
             .collect();
         let dc = aerobic_decoupling(&records);
-    
+
         assert!((dc - 0.0).abs() < 0.01);
     }
 
@@ -196,13 +195,19 @@ mod tests {
     #[test]
     fn test_power_zones() {
         let thresholds = PowerZoneThresholds {
-            zone_1: 0, zone_2a: 110, zone_2b: 150,
-            zone_3: 180, zone_4: 210, zone_5: 240, zone_6: 300, zone_7: 400,
+            zone_1: 0,
+            zone_2a: 110,
+            zone_2b: 150,
+            zone_3: 180,
+            zone_4: 210,
+            zone_5: 240,
+            zone_6: 300,
+            zone_7: 400,
         };
         let records = vec![
-            create_mock_record(100, 100),  // < 110  -> zone_1
-            create_mock_record(160, 260),  // 150-180 -> zone_2b
-            create_mock_record(220, 480),  // 210-240 -> zone_4
+            create_mock_record(100, 100), // < 110  -> zone_1
+            create_mock_record(160, 260), // 150-180 -> zone_2b
+            create_mock_record(220, 480), // 210-240 -> zone_4
         ];
         let zones = power_zone_distribution(&records, &thresholds);
         assert_eq!(zones.zone_1, 1);
@@ -214,13 +219,17 @@ mod tests {
     #[test]
     fn test_hr_zones() {
         let thresholds = HrZoneTresholds {
-            zone_1: 0, zone_2a: 114, zone_2b: 133,
-            zone_3: 152, zone_4: 165, zone_5: 177,
+            zone_1: 0,
+            zone_2a: 114,
+            zone_2b: 133,
+            zone_3: 152,
+            zone_4: 165,
+            zone_5: 177,
         };
         let records = vec![
-            create_record_with_hr(200, 100, 200),  // < 114  -> zone_1
-            create_record_with_hr(200, 150, 400),  // 133-152 -> zone_2b
-            create_record_with_hr(200, 185, 600),  // > 177  -> zone_5
+            create_record_with_hr(200, 100, 200), // < 114  -> zone_1
+            create_record_with_hr(200, 150, 400), // 133-152 -> zone_2b
+            create_record_with_hr(200, 185, 600), // > 177  -> zone_5
         ];
         let zones = heart_rate_zone_distribution(&records, &thresholds);
         assert_eq!(zones.zone_1, 1);
@@ -242,10 +251,7 @@ mod tests {
     // --- total_power_seconds ---
     #[test]
     fn test_total_power_seconds() {
-        let mut records = vec![
-            create_mock_record(200, 200),
-            create_mock_record(300, 500),
-        ];
+        let mut records = vec![create_mock_record(200, 200), create_mock_record(300, 500)];
         // add one with no power
         let mut no_power = create_mock_record(0, 0);
         no_power.power = None;

@@ -1,23 +1,26 @@
-pub mod averages_and_totals;
 pub mod aggregate;
+pub mod averages_and_totals;
 pub mod fit_parser;
 pub mod print_result;
 mod testi;
 
 // Re-export the public API used by Tauri and other consumers
-pub use self::main_logic::{SingleAnalysisResult, TotalAnalysisResult, TotalResult, analyze_one, analyze_all, combine_and_analyze_all};
+pub use self::main_logic::{
+    analyze_all, analyze_one, combine_and_analyze_all, SingleAnalysisResult, TotalAnalysisResult,
+    TotalResult,
+};
 
 mod main_logic {
-    use std::fs;
-    use rayon::prelude::*;
-    use serde::Serialize;
     use crate::averages_and_totals::*;
     use crate::fit_parser::FitRecord;
+    use rayon::prelude::*;
+    use serde::Serialize;
+    use std::fs;
 
     #[derive(Serialize)]
     pub struct TotalAnalysisResult {
         pub filename: String,
-        pub workout_date: Option<String>,  // ISO date from first FIT record timestamp
+        pub workout_date: Option<String>, // ISO date from first FIT record timestamp
         pub duration_seconds: u32,
         pub total_work_kj: u32,
         pub total_power_seconds: u32,
@@ -48,7 +51,7 @@ mod main_logic {
     }
     pub struct SingleAnalysisResult {
         pub filename: String,
-        pub workout_date: Option<String>,  // ISO date from first FIT record timestamp
+        pub workout_date: Option<String>, // ISO date from first FIT record timestamp
         pub duration_seconds: u32,
         pub total_work_kj: u32,
         pub total_power_seconds: u32,
@@ -104,14 +107,22 @@ mod main_logic {
         pub total_hr_zones: HrZoneTresholds,
     }
 
-
-    pub fn analyze_one(path: &str, ftp: u32, hr_zone_tresholds: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zone_thresholds: &PowerZoneThresholds, with_cache: bool) -> Result<SingleAnalysisResult, Box<dyn std::error::Error>> {
+    pub fn analyze_one(
+        path: &str,
+        ftp: u32,
+        hr_zone_tresholds: &HrZoneTresholds,
+        w_prime_j: u32,
+        cp: u32,
+        power_zone_thresholds: &PowerZoneThresholds,
+        with_cache: bool,
+    ) -> Result<SingleAnalysisResult, Box<dyn std::error::Error>> {
         let data: Vec<FitRecord> = if with_cache {
             crate::fit_parser::parse_fit_file_cached(path)?
         } else {
             crate::fit_parser::parse_fit_file(path)?
         };
-        let workout_date = data.iter()
+        let workout_date = data
+            .iter()
             .find_map(|r| r.timestamp.as_ref())
             .map(|dt| dt.format("%Y-%m-%d").to_string());
 
@@ -163,15 +174,22 @@ mod main_logic {
         })
     }
 
-
-    pub fn analyze_one_for_total(path: &str, ftp: u32, hr_zone_tresholds: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zone_thresholds: &PowerZoneThresholds, with_cache: bool) -> Result<TotalAnalysisResult, Box<dyn std::error::Error>> {
-      
+    pub fn analyze_one_for_total(
+        path: &str,
+        ftp: u32,
+        hr_zone_tresholds: &HrZoneTresholds,
+        w_prime_j: u32,
+        cp: u32,
+        power_zone_thresholds: &PowerZoneThresholds,
+        with_cache: bool,
+    ) -> Result<TotalAnalysisResult, Box<dyn std::error::Error>> {
         let data: Vec<FitRecord> = if with_cache {
             crate::fit_parser::parse_fit_file_cached(path)?
         } else {
             crate::fit_parser::parse_fit_file(path)?
         };
-        let workout_date = data.iter()
+        let workout_date = data
+            .iter()
             .find_map(|r| r.timestamp.as_ref())
             .map(|dt| dt.format("%Y-%m-%d").to_string());
 
@@ -216,55 +234,91 @@ mod main_logic {
             avg_speed: average_speed(&data),
         })
     }
-    
 
-    pub fn analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds, with_cache: bool) -> Vec<TotalAnalysisResult> {
-        
-
+    pub fn analyze_all(
+        folder: &str,
+        ftp: u32,
+        hr_zones: &HrZoneTresholds,
+        w_prime_j: u32,
+        cp: u32,
+        power_zones: &PowerZoneThresholds,
+        with_cache: bool,
+    ) -> Vec<TotalAnalysisResult> {
         let files: Vec<_> = fs::read_dir(folder)
             .expect("Cannot read folder")
             .filter_map(|e| e.ok())
             .filter(|e| {
                 let path = e.path();
                 let ext = path.extension().map(|x| x.to_string_lossy().to_string());
-                ext == Some("gz".to_string()) || ext == Some("FIT".to_string()) || ext == Some("fit".to_string())
+                ext == Some("gz".to_string())
+                    || ext == Some("FIT".to_string())
+                    || ext == Some("fit".to_string())
             })
             .collect();
 
-        let mut results: Vec<TotalAnalysisResult> = files.par_iter()
+        let mut results: Vec<TotalAnalysisResult> = files
+            .par_iter()
             .filter_map(|entry| {
                 let path = entry.path();
-                analyze_one_for_total(&path.to_string_lossy(), ftp, hr_zones, w_prime_j, cp, power_zones, with_cache).ok()
+                analyze_one_for_total(
+                    &path.to_string_lossy(),
+                    ftp,
+                    hr_zones,
+                    w_prime_j,
+                    cp,
+                    power_zones,
+                    with_cache,
+                )
+                .ok()
             })
             .collect();
 
-        // Razvrsti po datumu 
+        // Razvrsti po datumu
         results.sort_by(|a, b| a.workout_date.cmp(&b.workout_date));
 
         results
     }
-    pub fn combine_and_analyze_all(folder: &str, ftp: u32, hr_zones: &HrZoneTresholds, w_prime_j: u32, cp: u32, power_zones: &PowerZoneThresholds, with_cache: bool) -> TotalResult {
+    pub fn combine_and_analyze_all(
+        folder: &str,
+        ftp: u32,
+        hr_zones: &HrZoneTresholds,
+        w_prime_j: u32,
+        cp: u32,
+        power_zones: &PowerZoneThresholds,
+        with_cache: bool,
+    ) -> TotalResult {
         use crate::aggregate::*;
-        let mut results = analyze_all(folder, ftp, hr_zones, w_prime_j, cp, power_zones, with_cache);
+        let mut results = analyze_all(
+            folder,
+            ftp,
+            hr_zones,
+            w_prime_j,
+            cp,
+            power_zones,
+            with_cache,
+        );
         results.sort_by(|a, b| a.workout_date.cmp(&b.workout_date));
 
         TotalResult {
-            total_workouts:        results.len() as u32,
-            total_duration_hours:  results.iter().map(|r| r.duration_seconds as f64 / 3600.0).sum(),
-            total_work_kj:         results.iter().map(|r| r.total_work_kj).sum(),
-            total_distance_km:     results.iter().map(|r| r.total_distance_km).sum(),
-            total_elevation_gain:  results.iter().map(|r| r.total_elevation_gain).sum(),
-            best_pdc:              best_pdc(&results),
-            ctl:                   ctl_series(&results),
-            atl:                   atl_series(&results),
-            tsb:                   tsb_series(&results),
-            weekly_tss:            tss_series(&results),
-            weekly_work_kj:        work_kj_series(&results),
-            weekly_hours:          hours_series(&results),
+            total_workouts: results.len() as u32,
+            total_duration_hours: results
+                .iter()
+                .map(|r| r.duration_seconds as f64 / 3600.0)
+                .sum(),
+            total_work_kj: results.iter().map(|r| r.total_work_kj).sum(),
+            total_distance_km: results.iter().map(|r| r.total_distance_km).sum(),
+            total_elevation_gain: results.iter().map(|r| r.total_elevation_gain).sum(),
+            best_pdc: best_pdc(&results),
+            ctl: ctl_series(&results),
+            atl: atl_series(&results),
+            tsb: tsb_series(&results),
+            weekly_tss: tss_series(&results),
+            weekly_work_kj: work_kj_series(&results),
+            weekly_hours: hours_series(&results),
             aerobic_efficiency_trend: aerobic_efficiency_trend(&results),
-            np_trend:              np_trend(&results),
-            total_power_zones:     total_power_zone_distribution(&results),
-            total_hr_zones:        total_hr_zone_distribution(&results),
+            np_trend: np_trend(&results),
+            total_power_zones: total_power_zone_distribution(&results),
+            total_hr_zones: total_hr_zone_distribution(&results),
         }
     }
 }

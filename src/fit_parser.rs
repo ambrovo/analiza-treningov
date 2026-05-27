@@ -1,10 +1,10 @@
-use fitparser::{from_reader, Value};
+use chrono::{DateTime, Local};
 use fitparser::profile::MesgNum;
+use fitparser::{from_reader, Value};
 use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
 use std::io::BufReader;
-use chrono::{DateTime, Local};
 use std::path::{Path, PathBuf};
 
 /// Strongly typed FIT record with optional values
@@ -59,13 +59,11 @@ pub fn parse_fit_file_cached(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::
         if let Ok(records) = bincode::deserialize::<Vec<FitRecord>>(&bytes) {
             return Ok(records);
         }
-       
     }
 
     // če ni cache
     let records = parse_fit_file(path)?;
 
-    
     if let Some(dir) = cached_path.parent() {
         let _ = fs::create_dir_all(dir);
     }
@@ -89,7 +87,6 @@ pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::
     let mut session_start: Option<DateTime<Local>> = None;
 
     for record in from_reader(&mut reader)? {
-
         // dobiti datum za zacetek
         if record.kind() == MesgNum::Session || record.kind() == MesgNum::Activity {
             for field in record.fields() {
@@ -105,7 +102,6 @@ pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::
 
         if record.kind() == MesgNum::Record {
             let mut rec = FitRecord {
-          
                 timestamp: None,
                 heart_rate: None,
                 cadence: None,
@@ -128,29 +124,99 @@ pub fn parse_fit_file(path: &str) -> Result<Vec<FitRecord>, Box<dyn std::error::
 
             for field in record.fields() {
                 match field.name() {
-                    "timestamp" => if let Value::Timestamp(dt) = field.value() { rec.timestamp = Some(*dt); },
-                    "heart_rate" => if let Value::UInt8(v) = field.value() { rec.heart_rate = Some(*v); },
-                    "cadence" => if let Value::UInt8(v) = field.value() { rec.cadence = Some(*v); },
-                    "fractional_cadence" => if let Value::Float64(v) = field.value() { rec.fractional_cadence = Some(*v); },
-                    "distance" => if let Value::Float64(v) = field.value() { rec.distance = Some(*v); },
-                    "power" => if let Value::UInt16(v) = field.value() { rec.power = if *v < 3000 { Some(*v) } else { None }; },
-                    "accumulated_power" => if let Value::UInt32(v) = field.value() { rec.accumulated_power = Some(*v); },
-                    "enhanced_altitude" => if let Value::Float64(v) = field.value() { rec.enhanced_altitude = Some(*v); },
-                    "enhanced_respiration_rate" => if let Value::Float64(v) = field.value() { rec.enhanced_respiration_rate = Some(*v); },
-                    "enhanced_speed" => if let Value::Float64(v) = field.value() { rec.enhanced_speed = Some(*v); },
-                    "position_lat" => if let Value::SInt32(v) = field.value() { rec.position_lat = Some(*v); },
-                    "position_long" => if let Value::SInt32(v) = field.value() { rec.position_long = Some(*v); },
-                    "temperature" => if let Value::SInt8(v) = field.value() { rec.temperature = Some(*v); },
-                    "unknown_field_107" => if let Value::UInt8(v) = field.value() { rec.unknown_field_107 = Some(*v); },
-                    "unknown_field_134" => if let Value::UInt8(v) = field.value() { rec.unknown_field_134 = Some(*v); },
-                    "unknown_field_137" => if let Value::UInt8(v) = field.value() { rec.unknown_field_137 = Some(*v); },
-                    "unknown_field_138" => if let Value::UInt8(v) = field.value() { rec.unknown_field_138 = Some(*v); },
-                    "unknown_field_144" => if let Value::UInt8(v) = field.value() { rec.unknown_field_144 = Some(*v); },
+                    "timestamp" => {
+                        if let Value::Timestamp(dt) = field.value() {
+                            rec.timestamp = Some(*dt);
+                        }
+                    }
+                    "heart_rate" => {
+                        if let Value::UInt8(v) = field.value() {
+                            rec.heart_rate = Some(*v);
+                        }
+                    }
+                    "cadence" => {
+                        if let Value::UInt8(v) = field.value() {
+                            rec.cadence = Some(*v);
+                        }
+                    }
+                    "fractional_cadence" => {
+                        if let Value::Float64(v) = field.value() {
+                            rec.fractional_cadence = Some(*v);
+                        }
+                    }
+                    "distance" => {
+                        if let Value::Float64(v) = field.value() {
+                            rec.distance = Some(*v);
+                        }
+                    }
+                    "power" => {
+                        if let Value::UInt16(v) = field.value() {
+                            rec.power = if *v < 3000 { Some(*v) } else { None };
+                        }
+                    }
+                    "accumulated_power" => {
+                        if let Value::UInt32(v) = field.value() {
+                            rec.accumulated_power = Some(*v);
+                        }
+                    }
+                    "enhanced_altitude" => {
+                        if let Value::Float64(v) = field.value() {
+                            rec.enhanced_altitude = Some(*v);
+                        }
+                    }
+                    "enhanced_respiration_rate" => {
+                        if let Value::Float64(v) = field.value() {
+                            rec.enhanced_respiration_rate = Some(*v);
+                        }
+                    }
+                    "enhanced_speed" => {
+                        if let Value::Float64(v) = field.value() {
+                            rec.enhanced_speed = Some(*v);
+                        }
+                    }
+                    "position_lat" => {
+                        if let Value::SInt32(v) = field.value() {
+                            rec.position_lat = Some(*v);
+                        }
+                    }
+                    "position_long" => {
+                        if let Value::SInt32(v) = field.value() {
+                            rec.position_long = Some(*v);
+                        }
+                    }
+                    "temperature" => {
+                        if let Value::SInt8(v) = field.value() {
+                            rec.temperature = Some(*v);
+                        }
+                    }
+                    "unknown_field_107" => {
+                        if let Value::UInt8(v) = field.value() {
+                            rec.unknown_field_107 = Some(*v);
+                        }
+                    }
+                    "unknown_field_134" => {
+                        if let Value::UInt8(v) = field.value() {
+                            rec.unknown_field_134 = Some(*v);
+                        }
+                    }
+                    "unknown_field_137" => {
+                        if let Value::UInt8(v) = field.value() {
+                            rec.unknown_field_137 = Some(*v);
+                        }
+                    }
+                    "unknown_field_138" => {
+                        if let Value::UInt8(v) = field.value() {
+                            rec.unknown_field_138 = Some(*v);
+                        }
+                    }
+                    "unknown_field_144" => {
+                        if let Value::UInt8(v) = field.value() {
+                            rec.unknown_field_144 = Some(*v);
+                        }
+                    }
                     _ => {}
                 }
-
             }
-   
 
             // Use session_start as fallback if record has no timestamp
             if rec.timestamp.is_none() {

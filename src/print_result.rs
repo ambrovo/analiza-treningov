@@ -1,8 +1,6 @@
-use crate::{TotalResult, SingleAnalysisResult};
-
+use crate::{SingleAnalysisResult, TotalResult};
 
 pub fn print_result(_r: &TotalResult) {
-   
     println!("skupen rezultat");
 }
 

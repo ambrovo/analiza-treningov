@@ -1,4 +1,6 @@
-use crate::averages_and_totals::{MetricFloat, MetricMap, Graph, Axis, Unit, PowerZoneThresholds, HrZoneTresholds};
+use crate::averages_and_totals::{
+    Axis, Graph, HrZoneTresholds, MetricFloat, MetricMap, PowerZoneThresholds, Unit,
+};
 use crate::TotalAnalysisResult;
 use std::collections::HashMap;
 
@@ -11,8 +13,14 @@ pub fn best_pdc(_results: &[TotalAnalysisResult]) -> MetricMap {
 pub fn ctl_series(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "CTL".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "CTL".to_string(), unit: Unit::Custom("TSS/dan".to_string()) },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "CTL".to_string(),
+            unit: Unit::Custom("TSS/dan".to_string()),
+        },
         series: HashMap::new(),
     }
 }
@@ -21,8 +29,14 @@ pub fn ctl_series(_results: &[TotalAnalysisResult]) -> Graph {
 pub fn atl_series(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "ATL".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "ATL".to_string(), unit: Unit::Custom("TSS/dan".to_string()) },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "ATL".to_string(),
+            unit: Unit::Custom("TSS/dan".to_string()),
+        },
         series: HashMap::new(),
     }
 }
@@ -31,8 +45,14 @@ pub fn atl_series(_results: &[TotalAnalysisResult]) -> Graph {
 pub fn tsb_series(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "TSB".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "TSB".to_string(), unit: Unit::Custom("TSS".to_string()) },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "TSB".to_string(),
+            unit: Unit::Custom("TSS".to_string()),
+        },
         series: HashMap::new(),
     }
 }
@@ -41,8 +61,14 @@ pub fn tsb_series(_results: &[TotalAnalysisResult]) -> Graph {
 pub fn tss_series(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "Tedenski TSS".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "TSS".to_string(), unit: Unit::Custom("TSS".to_string()) },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "TSS".to_string(),
+            unit: Unit::Custom("TSS".to_string()),
+        },
         series: HashMap::new(),
     }
 }
@@ -51,8 +77,14 @@ pub fn tss_series(_results: &[TotalAnalysisResult]) -> Graph {
 pub fn work_kj_series(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "Tedensko delo".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "Delo".to_string(), unit: Unit::Custom("kJ".to_string()) },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "Delo".to_string(),
+            unit: Unit::Custom("kJ".to_string()),
+        },
         series: HashMap::new(),
     }
 }
@@ -61,8 +93,14 @@ pub fn work_kj_series(_results: &[TotalAnalysisResult]) -> Graph {
 pub fn hours_series(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "Ure".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "Ure".to_string(), unit: Unit::Hours },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "Ure".to_string(),
+            unit: Unit::Hours,
+        },
         series: HashMap::new(),
     }
 }
@@ -71,34 +109,64 @@ pub fn hours_series(_results: &[TotalAnalysisResult]) -> Graph {
 pub fn aerobic_efficiency_trend(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "Aerobna učinkovitost".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "EF".to_string(), unit: Unit::Custom("W/bpm".to_string()) },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "EF".to_string(),
+            unit: Unit::Custom("W/bpm".to_string()),
+        },
         series: HashMap::new(),
     }
 }
 
 // Skupna porazdelitev časa po conah moči čez vse treninge
 pub fn total_power_zone_distribution(_results: &[TotalAnalysisResult]) -> PowerZoneThresholds {
-    PowerZoneThresholds { zone_1: 0, zone_2a: 0, zone_2b: 0, zone_3: 0, zone_4: 0, zone_5: 0, zone_6: 0, zone_7: 0 }
+    PowerZoneThresholds {
+        zone_1: 0,
+        zone_2a: 0,
+        zone_2b: 0,
+        zone_3: 0,
+        zone_4: 0,
+        zone_5: 0,
+        zone_6: 0,
+        zone_7: 0,
+    }
 }
 
 // Skupna porazdelitev časa po conah srčnega utripa čez vse treninge
 pub fn total_hr_zone_distribution(_results: &[TotalAnalysisResult]) -> HrZoneTresholds {
-    HrZoneTresholds { zone_1: 0, zone_2a: 0, zone_2b: 0, zone_3: 0, zone_4: 0, zone_5: 0 }
+    HrZoneTresholds {
+        zone_1: 0,
+        zone_2a: 0,
+        zone_2b: 0,
+        zone_3: 0,
+        zone_4: 0,
+        zone_5: 0,
+    }
 }
 
 // Trend normalizirane moči skozi čas
 pub fn np_trend(_results: &[TotalAnalysisResult]) -> Graph {
     Graph {
         name: "NP trend".to_string(),
-        x_axis: Axis { label: "Datum".to_string(), unit: Unit::Custom("dan".to_string()) },
-        y_axis: Axis { label: "NP".to_string(), unit: Unit::Watts },
+        x_axis: Axis {
+            label: "Datum".to_string(),
+            unit: Unit::Custom("dan".to_string()),
+        },
+        y_axis: Axis {
+            label: "NP".to_string(),
+            unit: Unit::Watts,
+        },
         series: HashMap::new(),
     }
 }
 
 // Skupna prevožena razdalja in višinska razlika
-pub fn total_distance_and_elevation(_results: &[TotalAnalysisResult]) -> (MetricFloat, MetricFloat) {
+pub fn total_distance_and_elevation(
+    _results: &[TotalAnalysisResult],
+) -> (MetricFloat, MetricFloat) {
     // Seštej total_distance_km in total_elevation_gain čez vse rezultate
     (0.0, 0.0)
 }
