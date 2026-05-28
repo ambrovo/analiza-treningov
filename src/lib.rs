@@ -3,7 +3,7 @@ pub mod fit_parser;
 pub mod print_result;
 mod testi;
 
-pub use self::main_logic::{analyze_all, AnalysisResult, TotalResult, TrainingParams};
+pub use self::main_logic::{analyze_all, analyze_one, AnalysisResult, TotalResult, TrainingParams};
 
 mod main_logic {
     use crate::averages_and_totals::*;
@@ -130,8 +130,8 @@ mod main_logic {
             aerobic_quality: aerobic_quality_score(
                 data,
                 vi,
+                params.power_zones.zone_2 as MetricFloat,
                 params.power_zones.zone_2a as MetricFloat,
-                params.power_zones.zone_2b as MetricFloat,
             ),
             hr_drift_rate: hr_drift_rate(data),
             power_hr_slope: power_hr_slope(data),
@@ -162,6 +162,21 @@ mod main_logic {
             power_coverage: power_coverage(data, power_seconds),
             hr_coverage: hr_coverage(data, hr_seconds),
         }
+    }
+
+    pub fn analyze_one(
+        path: &str,
+        workout_date: &str,
+        params: &TrainingParams,
+        with_cache: bool,
+    ) -> AnalysisResult {
+        let data: Vec<FitRecord> = if with_cache {
+            crate::fit_parser::parse_fit_file_cached(&path)
+        } else {
+            crate::fit_parser::parse_fit_file(&path)
+        }
+        .unwrap_or_default();
+        analyze_data(path, &data, workout_date, params)
     }
 
     pub fn analyze_all(

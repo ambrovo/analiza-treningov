@@ -196,8 +196,8 @@ mod tests {
     fn test_power_zones() {
         let thresholds = PowerZoneThresholds {
             zone_1: 0,
-            zone_2a: 110,
-            zone_2b: 150,
+            zone_2: 110,
+            zone_2a: 150,
             zone_3: 180,
             zone_4: 210,
             zone_5: 240,
@@ -211,7 +211,7 @@ mod tests {
         ];
         let zones = power_zone_distribution(&thresholds, &power_density_histogram(&records));
         assert_eq!(zones.zone_1, 1);
-        assert_eq!(zones.zone_2b, 1);
+        assert_eq!(zones.zone_2a, 1);
         assert_eq!(zones.zone_4, 1);
     }
 
@@ -220,8 +220,8 @@ mod tests {
     fn test_hr_zones() {
         let thresholds = HrZoneTresholds {
             zone_1: 0,
-            zone_2a: 114,
-            zone_2b: 133,
+            zone_2: 114,
+            zone_2a: 133,
             zone_3: 152,
             zone_4: 165,
             zone_5: 177,
@@ -233,7 +233,7 @@ mod tests {
         ];
         let zones = heart_rate_zone_distribution(&thresholds, &hr_density_histogram(&records));
         assert_eq!(zones.zone_1, 1);
-        assert_eq!(zones.zone_2b, 1);
+        assert_eq!(zones.zone_2a, 1);
         assert_eq!(zones.zone_5, 1);
     }
 

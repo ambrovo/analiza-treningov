@@ -1,5 +1,5 @@
 use crate::fit_parser::FitRecord;
-use serde::{Serialize, de::value};
+use serde::Serialize;
 use std::collections::HashMap;
 
 pub type MetricInt = u32;
@@ -41,8 +41,8 @@ pub struct FitData {
 #[derive(Serialize)]
 pub struct PowerZoneThresholds {
     pub zone_1: u32,
+    pub zone_2: u32,
     pub zone_2a: u32,
-    pub zone_2b: u32,
     pub zone_3: u32,
     pub zone_4: u32,
     pub zone_5: u32,
@@ -52,8 +52,8 @@ pub struct PowerZoneThresholds {
 #[derive(Serialize)]
 pub struct HrZoneTresholds {
     pub zone_1: u32,
+    pub zone_2: u32,
     pub zone_2a: u32,
-    pub zone_2b: u32,
     pub zone_3: u32,
     pub zone_4: u32,
     pub zone_5: u32,
@@ -211,9 +211,9 @@ pub fn power_zone_distribution(
     //rezultat v formatu, ki vsebuje imena con
 
     PowerZoneThresholds {
-        zone_1: range_sum(0, z.zone_2a as usize),
-        zone_2a: range_sum(z.zone_2a as usize, z.zone_2b as usize),
-        zone_2b: range_sum(z.zone_2b as usize, z.zone_3 as usize),
+        zone_1: range_sum(0, z.zone_2 as usize),
+        zone_2: range_sum(z.zone_2 as usize, z.zone_2a as usize),
+        zone_2a: range_sum(z.zone_2a as usize, z.zone_3 as usize),
         zone_3: range_sum(z.zone_3 as usize, z.zone_4 as usize),
         zone_4: range_sum(z.zone_4 as usize, z.zone_5 as usize),
         zone_5: range_sum(z.zone_5 as usize, z.zone_6 as usize),
@@ -246,9 +246,9 @@ pub fn heart_rate_zone_distribution(
     //rezultat v formatu, ki vsebuje imena con
 
     HrZoneTresholds {
-        zone_1: range_sum(0, z.zone_2a as usize),
-        zone_2a: range_sum(z.zone_2a as usize, z.zone_2b as usize),
-        zone_2b: range_sum(z.zone_2b as usize, z.zone_3 as usize),
+        zone_1: range_sum(0, z.zone_2 as usize),
+        zone_2: range_sum(z.zone_2 as usize, z.zone_2a as usize),
+        zone_2a: range_sum(z.zone_2a as usize, z.zone_3 as usize),
         zone_3: range_sum(z.zone_3 as usize, z.zone_4 as usize),
         zone_4: range_sum(z.zone_4 as usize, z.zone_5 as usize),
         zone_5: range_sum(z.zone_5 as usize, MAX_HR),
@@ -623,11 +623,10 @@ pub fn w_recovery(wbal: &[f64], window_s: usize) -> MetricFloat {
 
 pub fn power_time_series(data: &[FitRecord]) -> Graph {
     // Graf moči skozi čas (W vs čas v minutah).
-    let points: Vec<(f64, f64)> = data.iter()
+    let points: Vec<(f64, f64)> = data
+        .iter()
         .enumerate()
-        .filter_map(|(i, r)| {
-            r.power.map(|p| (i as f64 / 60.0, p as f64))
-        })
+        .filter_map(|(i, r)| r.power.map(|p| (i as f64 / 60.0, p as f64)))
         .collect();
 
     let mut series = HashMap::new();
@@ -649,11 +648,10 @@ pub fn power_time_series(data: &[FitRecord]) -> Graph {
 
 pub fn hr_time_series(data: &[FitRecord]) -> Graph {
     // Graf srčnega utripa skozi čas (bpm vs čas v minutah).
-    let points: Vec<(f64, f64)> = data.iter()
+    let points: Vec<(f64, f64)> = data
+        .iter()
         .enumerate()
-        .filter_map(|(i, r)| {
-            r.heart_rate.map(|p| (i as f64 / 60.0, p as f64))
-        })
+        .filter_map(|(i, r)| r.heart_rate.map(|p| (i as f64 / 60.0, p as f64)))
         .collect();
 
     let mut series = HashMap::new();
@@ -675,11 +673,10 @@ pub fn hr_time_series(data: &[FitRecord]) -> Graph {
 
 pub fn altitude_time_series(data: &[FitRecord]) -> Graph {
     // Graf nadmorske višine skozi čas (m vs čas v minutah).
-    let points: Vec<(f64, f64)> = data.iter()
+    let points: Vec<(f64, f64)> = data
+        .iter()
         .enumerate()
-        .filter_map(|(i, r)| {
-            r.enhanced_altitude.map(|p| (i as f64 / 60.0, p as f64))
-        })
+        .filter_map(|(i, r)| r.enhanced_altitude.map(|p| (i as f64 / 60.0, p as f64)))
         .collect();
 
     let mut series = HashMap::new();
@@ -701,16 +698,15 @@ pub fn altitude_time_series(data: &[FitRecord]) -> Graph {
 
 pub fn speed_time_series(data: &[FitRecord]) -> Graph {
     // Graf hitrosti skozi čas (km/h vs čas v minutah).
-    let points: Vec<(f64, f64)> = data.iter()
+    let points: Vec<(f64, f64)> = data
+        .iter()
         .enumerate()
-        .filter_map(|(i, r)| {
-            r.enhanced_speed.map(|p| (i as f64 / 60.0, p as f64))
-        })
+        .filter_map(|(i, r)| r.enhanced_speed.map(|p| (i as f64 / 60.0, p as f64)))
         .collect();
 
     let mut series = HashMap::new();
     series.insert("Hitrost".to_string(), points);
-    
+
     Graph {
         name: "Hitrost".to_string(),
         x_axis: Axis {
@@ -727,16 +723,15 @@ pub fn speed_time_series(data: &[FitRecord]) -> Graph {
 
 pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
     // Graf kadence skozi čas (obr/min vs čas v minutah).
-    let points: Vec<(f64, f64)> = data.iter()
+    let points: Vec<(f64, f64)> = data
+        .iter()
         .enumerate()
-        .filter_map(|(i, r)| {
-            r.cadence.map(|p| (i as f64 / 60.0, p as f64))
-        })
+        .filter_map(|(i, r)| r.cadence.map(|p| (i as f64 / 60.0, p as f64)))
         .collect();
 
     let mut series = HashMap::new();
     series.insert("Kadenca".to_string(), points);
-    
+
     Graph {
         name: "Kadenca".to_string(),
         x_axis: Axis {
@@ -754,10 +749,7 @@ pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
 pub fn total_distance(data: &[FitRecord]) -> MetricFloat {
     // Skupna razdalja treninga v kilometrih.
 
-    data.iter()
-        .filter_map(|r| r.distance)
-        .last()
-        .unwrap_or(0.0) / 1000.0
+    data.iter().filter_map(|r| r.distance).last().unwrap_or(0.0) / 1000.0
 }
 
 pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
@@ -769,7 +761,11 @@ pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
         .windows(2)
         .filter_map(|w| {
             let diff = w[1] - w[0];
-            if diff > 0.0 {Some(diff)} else {None}
+            if diff > 0.0 {
+                Some(diff)
+            } else {
+                None
+            }
         })
         .sum()
 }
@@ -777,24 +773,34 @@ pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
 pub fn average_cadence(data: &[FitRecord]) -> MetricFloat {
     // Povprečna kadenca v obr/min med aktivno vožnjo.
 
-    let values: Vec<f64> = data.iter()
+    let values: Vec<f64> = data
+        .iter()
         .filter_map(|r| r.cadence)
         .filter(|&c| c > 0)
         .map(|c| c as f64)
         .collect();
 
-    if values.is_empty() {0.0} else {values.iter().sum::<f64>() / values.len() as f64}
+    if values.is_empty() {
+        0.0
+    } else {
+        values.iter().sum::<f64>() / values.len() as f64
+    }
 }
 
 pub fn average_speed(data: &[FitRecord]) -> MetricFloat {
     // Povprečna hitrost v km/h med aktivno vožnjo (brez postankov).
 
-    let values: Vec<f64> = data.iter()
+    let values: Vec<f64> = data
+        .iter()
         .filter_map(|r| r.enhanced_speed)
         .filter(|&c| c > 0.0)
         .collect();
 
-    if values.is_empty() {0.0} else {values.iter().sum::<f64>() / values.len() as f64 * 3.6}
+    if values.is_empty() {
+        0.0
+    } else {
+        values.iter().sum::<f64>() / values.len() as f64 * 3.6
+    }
 }
 
 pub fn power_density_histogram(data: &[FitRecord]) -> Vec<MetricInt> {
