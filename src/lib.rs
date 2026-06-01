@@ -171,9 +171,9 @@ mod main_logic {
         with_cache: bool,
     ) -> AnalysisResult {
         let data: Vec<FitRecord> = if with_cache {
-            crate::fit_parser::parse_fit_file_cached(&path)
+            crate::fit_parser::parse_fit_file_cached(path)
         } else {
-            crate::fit_parser::parse_fit_file(&path)
+            crate::fit_parser::parse_fit_file(path)
         }
         .unwrap_or_default();
         analyze_data(path, &data, workout_date, params)

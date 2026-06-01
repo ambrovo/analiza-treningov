@@ -676,7 +676,7 @@ pub fn altitude_time_series(data: &[FitRecord]) -> Graph {
     let points: Vec<(f64, f64)> = data
         .iter()
         .enumerate()
-        .filter_map(|(i, r)| r.enhanced_altitude.map(|p| (i as f64 / 60.0, p as f64)))
+        .filter_map(|(i, r)| r.enhanced_altitude.map(|p| (i as f64 / 60.0, p)))
         .collect();
 
     let mut series = HashMap::new();
@@ -701,7 +701,7 @@ pub fn speed_time_series(data: &[FitRecord]) -> Graph {
     let points: Vec<(f64, f64)> = data
         .iter()
         .enumerate()
-        .filter_map(|(i, r)| r.enhanced_speed.map(|p| (i as f64 / 60.0, p as f64)))
+        .filter_map(|(i, r)| r.enhanced_speed.map(|p| (i as f64 / 60.0, p)))
         .collect();
 
     let mut series = HashMap::new();
@@ -749,7 +749,7 @@ pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
 pub fn total_distance(data: &[FitRecord]) -> MetricFloat {
     // Skupna razdalja treninga v kilometrih.
 
-    data.iter().filter_map(|r| r.distance).last().unwrap_or(0.0) / 1000.0
+    data.iter().filter_map(|r| r.distance).next_back().unwrap_or(0.0) / 1000.0
 }
 
 pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
