@@ -749,7 +749,11 @@ pub fn cadence_time_series(data: &[FitRecord]) -> Graph {
 pub fn total_distance(data: &[FitRecord]) -> MetricFloat {
     // Skupna razdalja treninga v kilometrih.
 
-    data.iter().filter_map(|r| r.distance).next_back().unwrap_or(0.0) / 1000.0
+    data.iter()
+        .filter_map(|r| r.distance)
+        .next_back()
+        .unwrap_or(0.0)
+        / 1000.0
 }
 
 pub fn total_elevation_gain(data: &[FitRecord]) -> MetricFloat {
